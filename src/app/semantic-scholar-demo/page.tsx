@@ -106,7 +106,7 @@ export default function SemanticScholarDemo() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Enter your research query (e.g., 'AI and trust in social interactions')"
+              placeholder="Enter your research query (e.g., AI and trust in social interactions)"
               className="flex-1 px-4 py-3 border border-black focus:outline-none focus:ring-2 focus:ring-black"
               disabled={loading}
             />
@@ -219,7 +219,7 @@ export default function SemanticScholarDemo() {
         {/* No Results */}
         {!loading && query && results.length === 0 && !error && (
           <div className="text-center py-12 text-gray-600">
-            No papers found for "{query}". Try a different search term.
+            No papers found for &ldquo;{query}&rdquo;. Try a different search term.
           </div>
         )}
 
@@ -230,7 +230,7 @@ export default function SemanticScholarDemo() {
               Enter a research query to search for academic papers using the Semantic Scholar API.
             </p>
             <p className="text-sm text-gray-500">
-              Example queries: "machine learning", "climate change", "AI and trust in social interactions"
+              Example queries: &ldquo;machine learning&rdquo;, &ldquo;climate change&rdquo;, &ldquo;AI and trust in social interactions&rdquo;
             </p>
           </div>
         )}
