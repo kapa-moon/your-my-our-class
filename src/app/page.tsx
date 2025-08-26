@@ -41,12 +41,21 @@ export default function Home() {
           )}
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline"
-        >
-          {user.isGuest ? 'End session' : 'Sign out'}
-        </button>
+        <div className="flex flex-col items-center space-y-4">
+          <a
+            href="/semantic-scholar-demo"
+            className="px-6 py-3 border border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-200 hover:bg-gray-800 hover:text-white dark:hover:bg-gray-200 dark:hover:text-black transition-colors"
+          >
+            Try Semantic Scholar Demo
+          </a>
+          
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline"
+          >
+            {user.isGuest ? 'End session' : 'Sign out'}
+          </button>
+        </div>
       </div>
     </div>
   );
