@@ -141,7 +141,7 @@ export async function createGuestUser(): Promise<AuthResult> {
 }
 
 // Log session activity
-export async function logSession(userId: number, sessionData: any): Promise<void> {
+export async function logSession(userId: number, sessionData: Record<string, unknown>): Promise<void> {
   try {
     await db.insert(userSessions).values({
       userId,

@@ -40,7 +40,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       } else {
         setError(result.error || 'Authentication failed');
       }
-    } catch (err) {
+    } catch {
       setError('Network error');
     } finally {
       setLoading(false);
@@ -60,7 +60,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
       } else {
         setError(result.error || 'Failed to continue as guest');
       }
-    } catch (err) {
+    } catch {
       setError('Network error');
     } finally {
       setLoading(false);

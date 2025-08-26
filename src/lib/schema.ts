@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, boolean, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -16,4 +16,18 @@ export const userSessions = pgTable('user_sessions', {
   sessionData: text('session_data'), // JSON string for logging
   createdAt: timestamp('created_at').defaultNow(),
   expiresAt: timestamp('expires_at'),
+});
+
+export const papers = pgTable('papers', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  authors: text('authors'), // comma-separated or JSON string
+  abstract: text('abstract'),
+  url: text('url'),
+  keywords: text('keywords'), // comma-separated keywords
+  professorIntent: text('professor_intent'), // why the professor included this paper
+  topics: text('topics'), // comma-separated topics/themes
+  professorName: varchar('professor_name', { length: 100 }), // who suggested it
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
