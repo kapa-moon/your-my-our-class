@@ -15,6 +15,20 @@
       "when": 1756180252497,
       "tag": "0001_amazing_ronan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757625264651,
+      "tag": "0002_zippy_ravenous",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757627070464,
+      "tag": "0003_volatile_skaar",
+      "breakpoints": true
     }
   ]
 }

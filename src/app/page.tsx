@@ -43,6 +43,13 @@ export default function Home() {
 
         <div className="flex flex-col items-center space-y-4">
           <a
+            href="/onboarding-ground"
+            className="px-6 py-3 bg-gray-800 dark:bg-gray-200 text-white dark:text-black hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors"
+          >
+            Onboarding Ground
+          </a>
+          
+          <a
             href="/semantic-scholar-demo"
             className="px-6 py-3 border border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-200 hover:bg-gray-800 hover:text-white dark:hover:bg-gray-200 dark:hover:text-black transition-colors"
           >

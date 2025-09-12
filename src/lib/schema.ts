@@ -31,3 +31,24 @@ export const papers = pgTable('papers', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const studentSurveyResponses = pgTable('student_survey_responses', {
+  id: serial('id').primaryKey(),
+  userId: serial('user_id').references(() => users.id),
+  
+  // 1. Basics
+  preferredName: text('preferred_name'),
+  lastName: text('last_name'),
+  gender: text('gender'),
+  age: text('age'),
+  
+  // 2. Comprehensive Questions
+  academicBackground: text('academic_background'), // Combined: program, experience, skills, coursework
+  researchInterests: text('research_interests'),   // Combined: topics, motivations, subtopics
+  recentReadings: text('recent_readings'),         // Combined: readings, takeaways, reasons
+  classGoals: text('class_goals'),                 // Combined: reasons, project ideas, goals
+  discussionStyle: text('discussion_style'),       // New: class participation preferences
+  
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
