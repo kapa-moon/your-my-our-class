@@ -7,12 +7,23 @@ interface SurveyResponse {
   [questionId: string]: string | string[] | number;
 }
 
+interface SurveyQuestion {
+  id: string;
+  type: 'info' | 'text' | 'textarea';
+  title: string;
+  content: string;
+  category?: string;
+  placeholder?: string;
+  required?: boolean;
+  buttonText?: string;
+}
+
 export default function OnboardingGround() {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<SurveyResponse>({});
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const surveyQuestions = [
+  const surveyQuestions: SurveyQuestion[] = [
     {
       id: 'welcome',
       type: 'info',
@@ -170,7 +181,7 @@ export default function OnboardingGround() {
     }));
   };
 
-  const renderQuestion = (question: any) => {
+  const renderQuestion = (question: SurveyQuestion) => {
     const currentValue = responses[question.id] || '';
     
     switch (question.type) {
