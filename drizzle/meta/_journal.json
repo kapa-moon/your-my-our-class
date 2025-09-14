@@ -29,6 +29,20 @@
       "when": 1757627070464,
       "tag": "0003_volatile_skaar",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1757823617668,
+      "tag": "0004_demonic_misty_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1757830935949,
+      "tag": "0005_living_kate_bishop",
+      "breakpoints": true
     }
   ]
 }

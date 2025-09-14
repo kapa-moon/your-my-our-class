@@ -52,3 +52,19 @@ export const studentSurveyResponses = pgTable('student_survey_responses', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const personaCards = pgTable('persona_cards', {
+  id: serial('id').primaryKey(),
+  userId: serial('user_id').references(() => users.id),
+  
+  // Simplified Persona Card Fields (6 fields only)
+  name: text('name'),                              // Name (was displayName)
+  academicBackground: text('academic_background'), // Academic Background (was academicIdentity)
+  researchInterest: text('research_interest'),     // Research Interest (was researchPassion)
+  recentReading: text('recent_reading'),           // Recent Reading/Thoughts (was learningJourney)
+  learningGoal: text('learning_goal'),             // Learning Goal for the Class (was courseAspiration)
+  discussionStyle: text('discussion_style'),       // Discussion Style (was collaborationStyle)
+  
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});

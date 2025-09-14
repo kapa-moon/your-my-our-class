@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { getCurrentUserId } from '@/lib/auth-utils';
 
 interface SurveyResponse {
   [questionId: string]: string | string[] | number;
@@ -22,6 +23,18 @@ export default function OnboardingGround() {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<SurveyResponse>({});
   const [isCompleted, setIsCompleted] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
+
+  // Get the current user ID on component mount
+  useEffect(() => {
+    const currentUserId = getCurrentUserId();
+    if (currentUserId) {
+      setUserId(currentUserId);
+    } else {
+      // Redirect to home if no user is found
+      window.location.href = '/';
+    }
+  }, []);
 
   const surveyQuestions: SurveyQuestion[] = [
     {
@@ -140,8 +153,11 @@ export default function OnboardingGround() {
     } else {
       // Save responses to database before completing
       try {
-        // For now, we'll use a placeholder userId - in a real app, this would come from authentication
-        const userId = 1; // This should be the actual authenticated user's ID
+        if (!userId) {
+          alert('Authentication error. Please log in again.');
+          window.location.href = '/';
+          return;
+        }
         
         const response = await fetch('/api/survey', {
           method: 'POST',
@@ -262,6 +278,12 @@ export default function OnboardingGround() {
               Your responses have been recorded. We appreciate you taking the time to complete our survey.
             </p>
             <div className="flex justify-center gap-4">
+              <Link
+                href="/my-persona-card"
+                className="px-6 py-3 bg-blue-600 text-white border border-blue-600 hover:bg-blue-700 transition-colors rounded-md"
+              >
+                View My Persona Card
+              </Link>
               <Link
                 href="/"
                 className="px-6 py-3 bg-black text-white border border-black hover:bg-gray-800 transition-colors rounded-md"

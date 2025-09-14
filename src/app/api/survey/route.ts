@@ -8,6 +8,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { userId, responses } = body;
 
+    console.log('Survey API - Received request:', { userId, responsesKeys: Object.keys(responses || {}) });
+
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },
@@ -39,6 +41,8 @@ export async function POST(request: NextRequest) {
       classGoals: responses.classGoals || null,
       discussionStyle: responses.discussionStyle || null,
     };
+
+    console.log('Survey API - Processed survey data:', surveyData);
 
     // Check if user already has survey responses
     const existingResponse = await db

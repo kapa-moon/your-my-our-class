@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthForm from '@/components/AuthForm';
+import { storeUser, getStoredUser, clearStoredUser } from '@/lib/auth-utils';
 
 interface User {
   id: number;
@@ -13,12 +14,22 @@ interface User {
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
 
+  // Check for stored user on component mount
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
   const handleAuth = (authenticatedUser: User) => {
     setUser(authenticatedUser);
+    storeUser(authenticatedUser); // Store in localStorage
   };
 
   const handleLogout = () => {
     setUser(null);
+    clearStoredUser(); // Clear from localStorage
   };
 
   if (!user) {
@@ -44,14 +55,21 @@ export default function Home() {
         <div className="flex flex-col items-center space-y-4">
           <a
             href="/onboarding-ground"
-            className="px-6 py-3 bg-gray-800 dark:bg-gray-200 text-white dark:text-black hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors"
+            className="px-6 py-3 bg-gray-800 dark:bg-gray-200 text-white dark:text-black hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors rounded-md"
           >
             Onboarding Ground
           </a>
           
           <a
+            href="/my-persona-card"
+            className="px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors rounded-md"
+          >
+            My Persona Card
+          </a>
+          
+          <a
             href="/semantic-scholar-demo"
-            className="px-6 py-3 border border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-200 hover:bg-gray-800 hover:text-white dark:hover:bg-gray-200 dark:hover:text-black transition-colors"
+            className="px-6 py-3 border border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-200 hover:bg-gray-800 hover:text-white dark:hover:bg-gray-200 dark:hover:text-black transition-colors rounded-md"
           >
             Try Semantic Scholar Demo
           </a>
