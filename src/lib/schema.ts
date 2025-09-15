@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, boolean, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, boolean, integer } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -89,6 +89,76 @@ export const requiredPapers = pgTable('required_papers', {
   weekNumber: text('week_number').notNull(), // Week number (2, 3, 4, etc.)
   weekTopic: text('week_topic').notNull(), // Week topic (e.g., "AI-Mediated Communication")
   keywords: text('keywords'), // comma-separated keywords (legacy)
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const personalizedPapers = pgTable('personalized_papers', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  paperID: text('paper_id').notNull(), // Semantic Scholar paper ID
+  title: text('title').notNull(),
+  authors: text('authors'), // comma-separated author names
+  abstract: text('abstract'),
+  tldr: text('tldr'), // TL;DR summary from Semantic Scholar
+  topics: text('topics'), // comma-separated topics/fields of study
+  embeddings: text('embeddings'), // JSON string of embedding vector
+  doi: text('doi'), // DOI link
+  openAccessPdf: text('open_access_pdf'), // Open access PDF URL if available
+  category: text('category').notNull(), // Course category/classification
+  url: text('url'), // Semantic Scholar URL
+  weekNumber: text('week_number').notNull(), // Week number (2, 3, 4, etc.)
+  weekTopic: text('week_topic').notNull(), // Week topic (e.g., "AI-Mediated Communication")
+  relevanceRanking: integer('relevance_ranking').notNull(), // 1-4 ranking for each week
+  matchingReason: text('matching_reason'), // AI explanation for why this paper was selected
+  keywords: text('keywords'), // comma-separated keywords (legacy)
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const interviewChats = pgTable('interview_chats', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  
+  // Raw chat history as JSON
+  chatHistory: text('chat_history'), // JSON string of complete conversation
+  
+  // Interview status
+  isCompleted: boolean('is_completed').default(false),
+  completedAt: timestamp('completed_at'),
+  
+  // Extracted persona information (AI-processed from chat)
+  extractedAcademicBackground: text('extracted_academic_background'),
+  extractedResearchInterest: text('extracted_research_interest'),
+  extractedRecentReading: text('extracted_recent_reading'),
+  extractedLearningGoal: text('extracted_learning_goal'),
+  extractedDiscussionStyle: text('extracted_discussion_style'),
+  
+  // Metadata
+  totalMessages: integer('total_messages').default(0),
+  sessionDuration: integer('session_duration'), // in minutes
+  
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const presentablePersonas = pgTable('presentable_personas', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  
+  // Header information
+  name: text('name').notNull(),
+  affiliation: text('affiliation'),
+  
+  // Left column content
+  background: text('background'),
+  discussionStyle: text('discussion_style'),
+  
+  // Right column content
+  guidingQuestion: text('guiding_question'),
+  learningGoals: text('learning_goals'),
+  recentInterests: text('recent_interests'),
+  
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

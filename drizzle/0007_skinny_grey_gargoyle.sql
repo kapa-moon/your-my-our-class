@@ -1,0 +1,22 @@
+CREATE TABLE "required_papers" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"paper_id" text NOT NULL,
+	"title" text NOT NULL,
+	"authors" text,
+	"abstract" text,
+	"tldr" text,
+	"topics" text,
+	"embeddings" text,
+	"doi" text,
+	"open_access_pdf" text,
+	"category" text NOT NULL,
+	"url" text,
+	"week_number" text NOT NULL,
+	"week_topic" text NOT NULL,
+	"keywords" text,
+	"professor_intent" text,
+	"professor_name" varchar(100),
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "required_papers_paper_id_unique" UNIQUE("paper_id")
+);

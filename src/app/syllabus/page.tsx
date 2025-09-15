@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PaperCard from '@/components/PaperCard';
+import PersonalizedPaper from '@/components/PersonalizedPaper';
 
 interface RequiredPaper {
   id: number;
@@ -53,6 +54,7 @@ export default function SyllabusPage() {
     
     let isInScheduleSection = false;
     let isInEvaluationSection = false;
+    let isInCoursePoliciesSection = false;
     
     Array.from(headings).forEach((heading, index) => {
       const id = `heading-${index}`;
@@ -63,14 +65,13 @@ export default function SyllabusPage() {
       if (level === 2) {
         isInScheduleSection = text === 'Class Schedule & Readings';
         isInEvaluationSection = text === 'Course Structure and Student Evaluation';
-        // Exclude Course Policies section from TOC
-        if (text !== 'Course Policies') {
-          items.push({
-            id,
-            text,
-            level
-          });
-        }
+        isInCoursePoliciesSection = text === 'Course Policies';
+        // Include all h2 sections in TOC
+        items.push({
+          id,
+          text,
+          level
+        });
       } else if (level === 3) {
         if (isInScheduleSection && text.includes('Week')) {
           // Include weekly items under Class Schedule & Readings
@@ -90,13 +91,13 @@ export default function SyllabusPage() {
             text,
             level
           });
-        } else if (!isInScheduleSection && !isInEvaluationSection && text !== 'Course Policies') {
+        } else if (!isInScheduleSection && !isInEvaluationSection && !isInCoursePoliciesSection) {
           // Include other h3 sections, but exclude Course Policies subsections
-        items.push({
-          id,
-          text,
-          level
-        });
+          items.push({
+            id,
+            text,
+            level
+          });
         }
       } else if (level === 4 && isInEvaluationSection && !text.includes('Paper Presentations')) {
         // Include h4 items under Research Project, but exclude Paper Presentations
@@ -815,6 +816,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('2').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="2" />
           </div>
         )}
         
@@ -826,6 +828,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('3').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="3" />
           </div>
         )}
 
@@ -840,6 +843,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('4').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="4" />
           </div>
         )}
 
@@ -854,6 +858,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('5').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="5" />
             <div style={{ background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '6px', padding: '1rem', margin: '1rem 0' }}>
               <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>📚 Additional Reading</div>
               <div style={{ fontStyle: 'italic', color: '#6b7280' }}>Everyone read: Darryl Bem&apos;s &quot;How to Write an Empirical Article&quot; (starting page 11)</div>
@@ -872,6 +877,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('6').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="6" />
           </div>
         )}
 
@@ -883,6 +889,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('7').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="7" />
           </div>
         )}
         
@@ -894,6 +901,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('8').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="8" />
           </div>
         )}
 
@@ -905,6 +913,7 @@ export default function SyllabusPage() {
             {getPapersForWeek('9').map(paper => (
               <PaperCard key={paper.id} paper={paper} />
             ))}
+            <PersonalizedPaper weekNumber="9" />
             <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
               🎧 <a href="https://www.youtube.com/watch?v=UzgU4xAiTsM" target="_blank" rel="noopener noreferrer" style={{ color: '#000', textDecoration: 'none', borderBottom: '1px solid #f97316' }}>[YouTube Link]</a> Metaphors for LLMs (~20 minute audio presentation)
             </p>
@@ -957,6 +966,7 @@ export default function SyllabusPage() {
           For more information, visit: <a href="http://www.northwestern.edu/sexual-harassment/policy/index.html">http://www.northwestern.edu/sexual-harassment/policy/index.html</a>
         </p>
       </div>
+
     </div>
   );
 }

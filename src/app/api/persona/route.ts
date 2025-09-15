@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { personaCards, studentSurveyResponses } from '@/lib/schema';
+import { personaCards, studentSurveyResponses, interviewChats } from '@/lib/schema';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,27 +15,42 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // First try to get existing persona card
-    const existingPersona = await db
-      .select()
-      .from(personaCards)
-      .where(eq(personaCards.userId, parseInt(userId)))
-      .limit(1);
+    // Fetch persona card, survey data, and interview data
+    const [existingPersona, surveyResponse, interviewData] = await Promise.all([
+      db.select().from(personaCards).where(eq(personaCards.userId, parseInt(userId))).limit(1),
+      db.select().from(studentSurveyResponses).where(eq(studentSurveyResponses.userId, parseInt(userId))).limit(1),
+      db.select().from(interviewChats).where(eq(interviewChats.userId, parseInt(userId))).limit(1)
+    ]);
 
     if (existingPersona.length > 0) {
+      // Include additional data sources
+      const personaData = existingPersona[0];
+      const survey = surveyResponse[0] || null;
+      const interview = interviewData[0] || null;
+
       return NextResponse.json({
         success: true,
-        data: existingPersona[0]
+        data: {
+          ...personaData,
+          surveyData: survey ? {
+            academicBackground: survey.academicBackground,
+            researchInterests: survey.researchInterests,
+            recentReadings: survey.recentReadings,
+            classGoals: survey.classGoals,
+            discussionStyle: survey.discussionStyle
+          } : null,
+          interviewData: interview && interview.isCompleted ? {
+            academicBackground: interview.extractedAcademicBackground,
+            researchInterest: interview.extractedResearchInterest,
+            recentReading: interview.extractedRecentReading,
+            learningGoal: interview.extractedLearningGoal,
+            discussionStyle: interview.extractedDiscussionStyle
+          } : null
+        }
       });
     }
 
     // If no persona card exists, create one from survey responses
-    const surveyResponse = await db
-      .select()
-      .from(studentSurveyResponses)
-      .where(eq(studentSurveyResponses.userId, parseInt(userId)))
-      .limit(1);
-
     if (surveyResponse.length === 0) {
       return NextResponse.json(
         { error: 'No survey responses found. Please complete the survey first.' },
@@ -44,6 +59,7 @@ export async function GET(request: NextRequest) {
     }
 
     const survey = surveyResponse[0];
+    const interview = interviewData[0] || null;
     
     // Create initial persona card from survey data
     const initialPersona = {
@@ -63,7 +79,23 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: newPersona[0],
+      data: {
+        ...newPersona[0],
+        surveyData: {
+          academicBackground: survey.academicBackground,
+          researchInterests: survey.researchInterests,
+          recentReadings: survey.recentReadings,
+          classGoals: survey.classGoals,
+          discussionStyle: survey.discussionStyle
+        },
+        interviewData: interview && interview.isCompleted ? {
+          academicBackground: interview.extractedAcademicBackground,
+          researchInterest: interview.extractedResearchInterest,
+          recentReading: interview.extractedRecentReading,
+          learningGoal: interview.extractedLearningGoal,
+          discussionStyle: interview.extractedDiscussionStyle
+        } : null
+      },
       message: 'Persona card created from survey responses'
     });
 

@@ -277,29 +277,41 @@ export default function OnboardingGround() {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Your responses have been recorded. We appreciate you taking the time to complete our survey.
             </p>
-            <div className="flex justify-center gap-4">
-              <Link
-                href="/my-persona-card"
-                className="px-6 py-3 bg-blue-600 text-white border border-blue-600 hover:bg-blue-700 transition-colors rounded-md"
-              >
-                View My Persona Card
-              </Link>
-              <Link
-                href="/"
-                className="px-6 py-3 bg-black text-white border border-black hover:bg-gray-800 transition-colors rounded-md"
-              >
-                Back to Home
-              </Link>
-              <button
-                onClick={() => {
-                  setCurrentStep(0);
-                  setResponses({});
-                  setIsCompleted(false);
-                }}
-                className="px-6 py-3 border border-black text-black hover:bg-black hover:text-white transition-colors rounded-md"
-              >
-                Take Survey Again
-              </button>
+            
+            {/* Interview Bot Section */}
+            <div className="max-w-2xl mx-auto text-left space-y-4">
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-black">Want to share more?</h3>
+                <p className="text-gray-600">
+                  Try talking to a bot to elaborate on your responses and help us better understand your academic journey and interest.
+                </p>
+                <div>
+                  <Link
+                    href="/onboarding-ground-interview-bot"
+                    className="relative group text-black hover:text-orange-600 transition-all duration-300"
+                  >
+                    <span className="relative z-10">→ Start</span>
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500"></span>
+                    <span className="absolute inset-0 bg-orange-200 opacity-0 group-hover:opacity-30 transition-opacity duration-300 transform -skew-x-12"></span>
+                  </Link>
+                </div>
+              </div>
+              
+              <div className="space-y-2 pt-4">
+                <p className="text-gray-600">
+                  I think I am good. I already provided thorough answers to the survey.
+                </p>
+                <div>
+                  <Link
+                    href="/my-persona-card"
+                    className="relative group text-black hover:text-orange-600 transition-all duration-300"
+                  >
+                    <span className="relative z-10">→ View My Persona Card</span>
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500"></span>
+                    <span className="absolute inset-0 bg-orange-200 opacity-0 group-hover:opacity-30 transition-opacity duration-300 transform -skew-x-12"></span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
