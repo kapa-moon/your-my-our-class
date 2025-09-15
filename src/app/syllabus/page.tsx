@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function SyllabusPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -95,13 +96,13 @@ export default function SyllabusPage() {
         }
         
         .syllabus-content {
-          font-family: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          font-family: var(--font-atkinson-hyperlegible), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
           line-height: 1.6;
           color: #333;
         }
         
         .syllabus-content h1, .syllabus-content h2, .syllabus-content h3, .syllabus-content h4 {
-          font-family: 'Atkinson Hyperlegible', serif;
+          font-family: var(--font-atkinson-hyperlegible), serif;
           color: #222;
           line-height: 1.2;
         }
@@ -201,7 +202,7 @@ export default function SyllabusPage() {
           border: 1px solid #dee2e6;
           border-radius: 6px;
           cursor: pointer;
-          font-family: 'Atkinson Hyperlegible', sans-serif;
+          font-family: var(--font-atkinson-hyperlegible), sans-serif;
           font-size: 14px;
           color: #666;
           padding: 8px 12px;
@@ -240,7 +241,7 @@ export default function SyllabusPage() {
           z-index: 999;
         }
         .sidebar h3 {
-          font-family: 'Atkinson Hyperlegible', serif;
+          font-family: var(--font-atkinson-hyperlegible), serif;
           font-size: 1.1em;
           margin-bottom: 20px;
           color: #333;
@@ -464,12 +465,12 @@ export default function SyllabusPage() {
             <h1 className="text-2xl font-normal">Syllabus</h1>
             <div className="flex items-center gap-4">
               
-              <a 
+              <Link 
                 href="/"
                 className="px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors rounded-md"
               >
                 ← Back to Homepage
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -637,7 +638,7 @@ export default function SyllabusPage() {
           We will have two main readings per class and you are expected to read them carefully and come prepared to discuss.
         </p>
         <p>
-          Students must come to class prepared to participate actively. This means having read and thought about each week's reading prior to class, and being prepared to describe key points, arguments, and questions, and to discuss their research project. You will be called on to do so, and evaluated on your performance. Students are also encouraged to send relevant and interesting articles, links, videos, etc. to the instructor. Doing so will count toward the participation grade.
+          Students must come to class prepared to participate actively. This means having read and thought about each week&apos;s reading prior to class, and being prepared to describe key points, arguments, and questions, and to discuss their research project. You will be called on to do so, and evaluated on your performance. Students are also encouraged to send relevant and interesting articles, links, videos, etc. to the instructor. Doing so will count toward the participation grade.
         </p>
 
         <h4>Paper Presentations (25%)</h4>
@@ -654,12 +655,12 @@ export default function SyllabusPage() {
         {presentationDetailsOpen && (
           <ul>
             <li><strong>Length:</strong> Presentations should be no longer than 10 minutes maximum. A bit shorter is fine.</li>
-            <li><strong>Preparation:</strong> The goal is for you to be an expert on this paper - read it carefully, look up things you don't understand, and read the supplement if one exists. You can even skim key references to get more background.</li>
-            <li><strong>Format:</strong> Don't use powerpoint slides unless you need a lot of visual aids that aren't in the paper: this is an opportunity to practice the skill of walking people through a paper verbally.</li>
-            <li><strong>Outline:</strong> Write a clear outline for yourself, but DON'T write out everything you want to say.</li>
+            <li><strong>Preparation:</strong> The goal is for you to be an expert on this paper - read it carefully, look up things you don&apos;t understand, and read the supplement if one exists. You can even skim key references to get more background.</li>
+            <li><strong>Format:</strong> Don&apos;t use powerpoint slides unless you need a lot of visual aids that aren&apos;t in the paper: this is an opportunity to practice the skill of walking people through a paper verbally.</li>
+            <li><strong>Outline:</strong> Write a clear outline for yourself, but DON&apos;T write out everything you want to say.</li>
             <li><strong>Practice:</strong> Practice your presentation for a friend at least twice so you get the timing right and know what you want to say.</li>
             <li><strong>Content:</strong> Describe 1) the goals of the study and how it connects to prior work, 2) the models being used, 3) the methods of the experiments and/or simulations, 4) the results, and 5) the interpretation.</li>
-            <li><strong>Visual aids:</strong> You can also walk people through key display items (graphs, tables, diagrams) in a paper, e.g. "You can see on the left side of Figure 1 what the network looks like, it's got an input layer, one hidden layer, etc."</li>
+            <li><strong>Visual aids:</strong> You can also walk people through key display items (graphs, tables, diagrams) in a paper, e.g. &quot;You can see on the left side of Figure 1 what the network looks like, it&apos;s got an input layer, one hidden layer, etc.&quot;</li>
             <li><strong>Questions:</strong> Make sure you end with 2-3 questions about the study and its interpretation.</li>
           </ul>
         )}
@@ -689,7 +690,7 @@ export default function SyllabusPage() {
                 </div>
               </td>
               <td>
-                Reproduction of "experimental" (simulation/evaluation) results from a paper we read
+                Reproduction of &quot;experimental&quot; (simulation/evaluation) results from a paper we read
               </td>
             </tr>
             <tr>
@@ -710,7 +711,7 @@ export default function SyllabusPage() {
           We will discuss in class what we think a fair policy is with respect to AI assistance on your projects. <span className="crayon-highlight">TBD</span>
         </p>
         <p className="gray-text">
-          You can use any tool that you think is relevant, but you MUST acknowledge which tools you used at the end of the paper in a short statement, e.g. "Used Consensus for literature review, used ChatGPT (4) for editing, and Copilot for help with making the figures." Please acknowledge explicitly whether any text was authored (first draft or revisions) by an AI tool.
+          You can use any tool that you think is relevant, but you MUST acknowledge which tools you used at the end of the paper in a short statement, e.g. &quot;Used Consensus for literature review, used ChatGPT (4) for editing, and Copilot for help with making the figures.&quot; Please acknowledge explicitly whether any text was authored (first draft or revisions) by an AI tool.
         </p>
 
         <h4>Proposals (Oct 15)</h4>
@@ -772,7 +773,7 @@ export default function SyllabusPage() {
           <li><em>Could a Large Language Model Be Conscious? - Boston Review</em> (Presenter: Tiffany)</li>
           <li><em>Generative Agents: Interactive Simulacra of Human Behavior</em> (Presenter: Keshav)</li>
           <li><em>Large language models show human-like content biases in transmission chain experiments | PNAS</em> (Presenter: Sabina)</li>
-          <li>Everyone read: <em>Darryl Bem's How to Write an Empirical Article</em> (starting page 11)</li>
+          <li>Everyone read: <em>Darryl Bem&apos;s How to Write an Empirical Article</em> (starting page 11)</li>
         </ul>
         
         <h3>Week 6: Oct 29 - Deception and Truth</h3>
@@ -816,12 +817,12 @@ export default function SyllabusPage() {
         
         <h3>Late Assignments</h3>
         <p>
-          Students may submit one of their papers up to 24 hours late during the course of the quarter. This can be for any or no reason. Beyond this one, late assignments without prior arrangements or notification will penalized by 10% per day late. If you anticipate not being able to turn an assignment in on time, you should contact the instructor as early as possible. Extensions are at the instructor's discretion.
+          Students may submit one of their papers up to 24 hours late during the course of the quarter. This can be for any or no reason. Beyond this one, late assignments without prior arrangements or notification will penalized by 10% per day late. If you anticipate not being able to turn an assignment in on time, you should contact the instructor as early as possible. Extensions are at the instructor&apos;s discretion.
         </p>
         
         <h3>Attendance</h3>
         <p>
-          Regular attendance is mandatory for this course, as there will be substantial time devoted to discussion, exercises and project work in class. Repeated failure to attend class could result in your course grade being lowered, or your dismissal from the course, at the instructor's discretion.
+          Regular attendance is mandatory for this course, as there will be substantial time devoted to discussion, exercises and project work in class. Repeated failure to attend class could result in your course grade being lowered, or your dismissal from the course, at the instructor&apos;s discretion.
         </p>
 
         <h3>Use of Generative AI</h3>
@@ -836,7 +837,7 @@ export default function SyllabusPage() {
 
         <h3>Academic Integrity at Stanford University</h3>
         <p>
-          Students are expected to comply with University regulations regarding academic integrity. If you are in doubt about what constitutes academic dishonesty, speak to the instructors before the assignment is due and/or examine the University web site. Academic dishonesty includes, but is not limited to cheating on an exam (e.g., copying others' answers, providing information to others, using a crib sheet) or plagiarism of a paper (e.g., taking material from readings without citation, copying another student's paper). Failure to maintain academic integrity on an assignment will result in a loss of credit for that assignment—at a minimum. Other penalties may also apply, including academic suspension. The guidelines for determining academic dishonesty and procedures followed in a suspected incident of academic dishonesty are detailed on the website.
+          Students are expected to comply with University regulations regarding academic integrity. If you are in doubt about what constitutes academic dishonesty, speak to the instructors before the assignment is due and/or examine the University web site. Academic dishonesty includes, but is not limited to cheating on an exam (e.g., copying others&apos; answers, providing information to others, using a crib sheet) or plagiarism of a paper (e.g., taking material from readings without citation, copying another student&apos;s paper). Failure to maintain academic integrity on an assignment will result in a loss of credit for that assignment—at a minimum. Other penalties may also apply, including academic suspension. The guidelines for determining academic dishonesty and procedures followed in a suspected incident of academic dishonesty are detailed on the website.
         </p>
         <p>
           For more information, visit:<br />

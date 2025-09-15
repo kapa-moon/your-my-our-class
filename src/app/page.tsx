@@ -11,18 +11,6 @@ interface User {
   sessionId?: string;
 }
 
-interface PersonaCard {
-  id: number;
-  userId: number;
-  name: string;
-  academicBackground: string;
-  researchInterest: string;
-  recentReading: string;
-  learningGoal: string;
-  discussionStyle: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -47,7 +35,7 @@ export default function Home() {
           setPreferredName(data.data.name);
         }
       }
-    } catch (error) {
+    } catch {
       console.log('Could not fetch persona card, using default name');
       // Silently fail - we'll use the default name
     }
