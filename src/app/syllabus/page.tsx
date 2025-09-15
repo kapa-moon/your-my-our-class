@@ -2,11 +2,49 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import PaperCard from '@/components/PaperCard';
+
+interface RequiredPaper {
+  id: number;
+  paperID: string;
+  title: string;
+  authors: string | null;
+  abstract: string | null;
+  tldr: string | null;
+  doi: string | null;
+  openAccessPdf: string | null;
+  url: string | null;
+  weekNumber: string;
+  weekTopic: string;
+}
 
 export default function SyllabusPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [tocItems, setTocItems] = useState<Array<{id: string, text: string, level: number}>>([]);
   const [presentationDetailsOpen, setPresentationDetailsOpen] = useState(false);
+  const [requiredPapers, setRequiredPapers] = useState<RequiredPaper[]>([]);
+  const [loadingPapers, setLoadingPapers] = useState(true);
+
+  // Fetch required papers
+  useEffect(() => {
+    const fetchRequiredPapers = async () => {
+      try {
+        const response = await fetch('/api/required-papers');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setRequiredPapers(data.papers);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch required papers:', error);
+      } finally {
+        setLoadingPapers(false);
+      }
+    };
+
+    fetchRequiredPapers();
+  }, []);
 
   useEffect(() => {
     // Generate table of contents from h2, h3, and h4 elements
@@ -25,11 +63,14 @@ export default function SyllabusPage() {
       if (level === 2) {
         isInScheduleSection = text === 'Class Schedule & Readings';
         isInEvaluationSection = text === 'Course Structure and Student Evaluation';
-        items.push({
-          id,
-          text,
-          level
-        });
+        // Exclude Course Policies section from TOC
+        if (text !== 'Course Policies') {
+          items.push({
+            id,
+            text,
+            level
+          });
+        }
       } else if (level === 3) {
         if (isInScheduleSection && text.includes('Week')) {
           // Include weekly items under Class Schedule & Readings
@@ -49,16 +90,16 @@ export default function SyllabusPage() {
             text,
             level
           });
-        } else if (!isInScheduleSection && !isInEvaluationSection) {
-          // Include other h3 sections
-          items.push({
-            id,
-            text,
-            level
-          });
+        } else if (!isInScheduleSection && !isInEvaluationSection && text !== 'Course Policies') {
+          // Include other h3 sections, but exclude Course Policies subsections
+        items.push({
+          id,
+          text,
+          level
+        });
         }
-      } else if (level === 4 && isInEvaluationSection) {
-        // Include h4 items under Research Project
+      } else if (level === 4 && isInEvaluationSection && !text.includes('Paper Presentations')) {
+        // Include h4 items under Research Project, but exclude Paper Presentations
         items.push({
           id,
           text,
@@ -84,6 +125,11 @@ export default function SyllabusPage() {
         heading.scrollIntoView({ behavior: 'smooth' });
       }
     });
+  };
+
+  // Get papers for a specific week
+  const getPapersForWeek = (weekNumber: string): RequiredPaper[] => {
+    return requiredPapers.filter(paper => paper.weekNumber === weekNumber);
   };
 
   return (
@@ -250,6 +296,8 @@ export default function SyllabusPage() {
           overflow-y: auto;
           transition: left 0.3s ease;
           z-index: 999;
+          background-color: white;
+          border-right: 1px solid #ddd;
         }
         .sidebar h3 {
           font-family: var(--font-atkinson-hyperlegible), serif;
@@ -456,7 +504,7 @@ export default function SyllabusPage() {
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: rgba(0, 0, 0, 0.3);
+          background: rgba(0, 0, 0, 0.1);
           z-index: 998;
           display: ${sidebarOpen ? 'block' : 'none'};
         }
@@ -487,16 +535,16 @@ export default function SyllabusPage() {
         </div>
       </div>
       <button 
-                className="sidebar-toggle"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                <div className="toggle-icon">
-                  <span>
-                    {sidebarOpen ? '←' : '☰'}
-                  </span>
-                </div>
-                {sidebarOpen ? 'Hide Outline' : 'Show Outline'}
-              </button>
+        className="sidebar-toggle"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        <div className="toggle-icon">
+          <span>
+            {sidebarOpen ? '←' : '☰'}
+          </span>
+        </div>
+        {sidebarOpen ? 'Hide Outline' : 'Show Outline'}
+      </button>
       <div className="sidebar">
         {tocItems.map((item) => (
           <a
@@ -575,7 +623,7 @@ export default function SyllabusPage() {
         <h2>Course Structure and Student Evaluation</h2>
         
         <p>Evaluation in this course is based on presenting an AI paper to the class, two research papers (a draft and a final) and participation.</p>
-
+        
         <h3>Grade Breakdown</h3>
         <ul className="grade-breakdown">
           <li><span>Class Participation</span> <span><strong>30%</strong></span></li>
@@ -673,7 +721,7 @@ export default function SyllabusPage() {
             <li><strong>Content:</strong> Describe 1) the goals of the study and how it connects to prior work, 2) the models being used, 3) the methods of the experiments and/or simulations, 4) the results, and 5) the interpretation.</li>
             <li><strong>Visual aids:</strong> You can also walk people through key display items (graphs, tables, diagrams) in a paper, e.g. &quot;You can see on the left side of Figure 1 what the network looks like, it&apos;s got an input layer, one hidden layer, etc.&quot;</li>
             <li><strong>Questions:</strong> Make sure you end with 2-3 questions about the study and its interpretation.</li>
-          </ul>
+        </ul>
         )}
 
         <h3>Research Project (70%)</h3>
@@ -760,67 +808,113 @@ export default function SyllabusPage() {
         <h3>Week 1: Sept 24 - Intro</h3>
         
         <h3>Week 2: Oct 1 - AI-Mediated Communication</h3>
-        <ul>
-          <li><em>AI-Mediated Communication: Definition, Research Agenda, and Ethical Considerations, JCMC</em></li>
-          <li><em>Human heuristics for AI-generated language are flawed. PNAS</em></li>
-        </ul>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('2').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+          </div>
+        )}
         
         <h3>Week 3: Oct 8 - LLMs and role play</h3>
-        <ul>
-          <li><em>Role play with large language models | Nature</em></li>
-          <li><em>Evaluating large language models in theory of mind tasks</em></li>
-        </ul>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('3').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+          </div>
+        )}
 
-        <h3>Week 4: Oct 15 - Social Bots (Guest Lecturer Harry Yan)</h3>
-        <ul>
-          <li><strong><span className="deadline-link" onClick={() => scrollToSection('Proposals')}>Proposal Due</span></strong></li>
-          <li><em>Exposure to social bots amplifies perceptual biases and regulation propensity</em></li>
-          <li><em>The landscape of social bot research: a critical appraisal</em></li>
-        </ul>
+        <h3>Week 4: Oct 15 - Social Bots</h3>
+        <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '6px', padding: '0.75rem', margin: '1rem 0', fontSize: '0.9rem' }}>
+          <strong>📝 Assignment Due:</strong> <span className="deadline-link" onClick={() => scrollToSection('Proposals')} style={{ color: '#d97706', cursor: 'pointer', textDecoration: 'underline' }}>1-Page Proposal Due</span>
+        </div>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('4').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+          </div>
+        )}
 
         <h3>Week 5: Oct 22 - Models interacting with each other</h3>
-        <ul>
-          <li><strong><span className="deadline-link" onClick={() => scrollToSection('Draft Paper')}>Work on draft with partner in class</span></strong></li>
-          <li><em>Could a Large Language Model Be Conscious? - Boston Review</em></li>
-          <li><em>Generative Agents: Interactive Simulacra of Human Behavior</em></li>
-          <li><em>Large language models show human-like content biases in transmission chain experiments | PNAS</em></li>
-          <li>Everyone read: <em>Darryl Bem&apos;s How to Write an Empirical Article</em> (starting page 11)</li>
-        </ul>
+        <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
+          👥 <span className="deadline-link" onClick={() => scrollToSection('Draft Paper')} style={{ color: '#1d4ed8', cursor: 'pointer', textDecoration: 'underline' }}>Work on draft with partner in class</span>
+        </p>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('5').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+            <div style={{ background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '6px', padding: '1rem', margin: '1rem 0' }}>
+              <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>📚 Additional Reading</div>
+              <div style={{ fontStyle: 'italic', color: '#6b7280' }}>Everyone read: Darryl Bem&apos;s &quot;How to Write an Empirical Article&quot; (starting page 11)</div>
+            </div>
+          </div>
+        )}
         
         <h3>Week 6: Oct 29 - Deception and Truth</h3>
-        <ul>
-          <li><strong><span className="deadline-link" onClick={() => scrollToSection('Draft Paper')}>Revised Draft Paper Due</span></strong></li>
-          <li><em>Generative AI are more truth-biased than humans: A replication and extension of core truth-default theory principles</em></li>
-          <li><em>Durably reducing conspiracy beliefs through dialogues with AI</em></li>
-          <li>Extras: <em>Quantifying the vulnerabilities of online public square</em></li>
-        </ul>
+        <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '6px', padding: '0.75rem', margin: '1rem 0', fontSize: '0.9rem' }}>
+          <strong>📝 Assignment Due:</strong> <span className="deadline-link" onClick={() => scrollToSection('Draft Paper')} style={{ color: '#d97706', cursor: 'pointer', textDecoration: 'underline' }}>Revised Draft Paper Due</span>
+        </div>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('6').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+          </div>
+        )}
 
         <h3>Week 7: Nov 5 - LLMs reflecting human diversity of thought and opinion</h3>
-        <ul>
-          <li><em>Can generative AI improve social science</em></li>
-          <li><em>Can LLMs predict results of social science experiments?</em></li>
-        </ul>
-        <p><em>Note: Nov 4 (Tuesday) is Democracy Day - no classes</em></p>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('7').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+          </div>
+        )}
         
         <h3>Week 8: Nov 12 - LLMs as (amazing) content analysts</h3>
-        <ul>
-          <li><em>Embedding democratic values into social media AIs via societal objective functions</em></li>
-          <li><em>Affective Polarization</em></li>
-          <li><em>The Content Policy Project</em></li>
-        </ul>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('8').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+          </div>
+        )}
 
         <h3>Week 9: Nov 19 - Reflections on human cognition</h3>
-        <ul>
-          <li><em>Metaphors for LLMs (~20 minute audio presentation)</em></li>
-          <li><em>Openly accessible LLMs can help us to understand human cognition. Nature Human Behaviour</em></li>
-        </ul>
-        <p><em>Note: Nov 24-28 is Thanksgiving Recess - no classes</em></p>
+        {loadingPapers ? (
+          <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
+        ) : (
+          <div>
+            {getPapersForWeek('9').map(paper => (
+              <PaperCard key={paper.id} paper={paper} />
+            ))}
+            <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
+              🎧 <a href="https://www.youtube.com/watch?v=UzgU4xAiTsM" target="_blank" rel="noopener noreferrer" style={{ color: '#000', textDecoration: 'none', borderBottom: '1px solid #f97316' }}>[YouTube Link]</a> Metaphors for LLMs (~20 minute audio presentation)
+            </p>
+          </div>
+        )}
 
         <h3>Week 10: Dec 3 - Final project presentations</h3>
-        <ul>
-          <li><strong><span className="deadline-link" onClick={() => scrollToSection('Presentations')}>Final Project Presentations (5-8 minutes)</span></strong></li>
-          <li>Brief work on final draft with partner in class.</li>
-        </ul>
+        <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
+          <strong>Final Presentations:</strong> <span className="deadline-link" onClick={() => scrollToSection('Presentations')} style={{ color: '#d97706', cursor: 'pointer', textDecoration: 'underline' }}>Final Project Presentations (5-8 minutes)</span>
+        </p>
         
         <p><strong><span className="brush-underline deadline-link" onClick={() => scrollToSection('Final Paper')}>Final Paper Due: December 13</span></strong></p>
 

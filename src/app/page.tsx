@@ -102,6 +102,13 @@ export default function Home() {
             Your Syllabus
           </a>
           
+          <a
+            href="/weekly-schedules"
+            className="px-6 py-3 bg-purple-600 dark:bg-purple-500 text-white hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors rounded-md"
+          >
+            Weekly Schedules & Readings
+          </a>
+          
           <button
             onClick={handleLogout}
             className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline"

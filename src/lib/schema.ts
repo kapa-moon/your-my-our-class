@@ -20,14 +20,18 @@ export const userSessions = pgTable('user_sessions', {
 
 export const papers = pgTable('papers', {
   id: serial('id').primaryKey(),
+  paperID: text('paper_id').notNull().unique(), // Semantic Scholar paper ID
   title: text('title').notNull(),
-  authors: text('authors'), // comma-separated or JSON string
+  authors: text('authors'), // comma-separated author names
   abstract: text('abstract'),
-  url: text('url'),
-  keywords: text('keywords'), // comma-separated keywords
-  professorIntent: text('professor_intent'), // why the professor included this paper
-  topics: text('topics'), // comma-separated topics/themes
-  professorName: varchar('professor_name', { length: 100 }), // who suggested it
+  tldr: text('tldr'), // TL;DR summary from Semantic Scholar
+  topics: text('topics'), // comma-separated topics/fields of study
+  embeddings: text('embeddings'), // JSON string of embedding vector
+  doi: text('doi'), // DOI link
+  openAccessPdf: text('open_access_pdf'), // Open access PDF URL if available
+  category: text('category').notNull(), // Course category/classification
+  url: text('url'), // Semantic Scholar URL
+  keywords: text('keywords'), // comma-separated keywords (legacy)
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
@@ -65,6 +69,26 @@ export const personaCards = pgTable('persona_cards', {
   learningGoal: text('learning_goal'),             // Learning Goal for the Class (was courseAspiration)
   discussionStyle: text('discussion_style'),       // Discussion Style (was collaborationStyle)
   
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const requiredPapers = pgTable('required_papers', {
+  id: serial('id').primaryKey(),
+  paperID: text('paper_id').notNull().unique(), // Semantic Scholar paper ID
+  title: text('title').notNull(),
+  authors: text('authors'), // comma-separated author names
+  abstract: text('abstract'),
+  tldr: text('tldr'), // TL;DR summary from Semantic Scholar
+  topics: text('topics'), // comma-separated topics/fields of study
+  embeddings: text('embeddings'), // JSON string of embedding vector
+  doi: text('doi'), // DOI link
+  openAccessPdf: text('open_access_pdf'), // Open access PDF URL if available
+  category: text('category').notNull(), // Course category/classification
+  url: text('url'), // Semantic Scholar URL
+  weekNumber: text('week_number').notNull(), // Week number (2, 3, 4, etc.)
+  weekTopic: text('week_topic').notNull(), // Week topic (e.g., "AI-Mediated Communication")
+  keywords: text('keywords'), // comma-separated keywords (legacy)
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
