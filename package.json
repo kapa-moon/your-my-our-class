@@ -13,7 +13,8 @@
     "db:seed": "npx tsx src/lib/seed-papers.ts",
     "db:seed-users": "npx tsx src/lib/seed-users.ts",
     "show-credentials": "npx tsx src/scripts/show-student-credentials.ts",
-    "update-passwords": "npx tsx src/scripts/update-student-passwords.ts"
+    "update-passwords": "npx tsx src/scripts/update-student-passwords.ts",
+    "create-pilots": "npx tsx src/scripts/create-pilot-users.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",

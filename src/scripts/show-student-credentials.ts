@@ -23,6 +23,15 @@ const studentCredentials = [
 // Test user credential
 const testUserCredential = { name: 'student_test', password: 'testtest' };
 
+// Pilot user credentials
+const pilotCredentials = [
+  { name: 'pilot1', password: '[o;py2' },
+  { name: 'pilot2', password: '[o;py3' },
+  { name: 'pilot3', password: '[o;py4' },
+  { name: 'pilot4', password: '[o;py5' },
+  { name: 'pilot5', password: '[o;py6' },
+];
+
 async function showStudentCredentials() {
   try {
     console.log('🔍 Checking student users in database...\n');
@@ -35,7 +44,8 @@ async function showStudentCredentials() {
       ));
     
     const studentAccounts = studentUsers.filter(user => 
-      user.name.startsWith('student') && (user.name.match(/^student\d+$/) || user.name === 'student_test')
+      (user.name.startsWith('student') && (user.name.match(/^student\d+$/) || user.name === 'student_test')) ||
+      user.name.startsWith('pilot')
     );
     
     console.log(`✅ Found ${studentAccounts.length} student accounts in database:`);
@@ -58,7 +68,16 @@ async function showStudentCredentials() {
     console.log(`  Password: ${testUserCredential.password}`);
     console.log('');
     
-    console.log('Note: Each student has a unique password for security.');
+    console.log('🧪 PILOT USERS:');
+    console.log('================');
+    pilotCredentials.forEach((pilot, index) => {
+      console.log(`Pilot ${index + 1}:`);
+      console.log(`  Username: ${pilot.name}`);
+      console.log(`  Password: ${pilot.password}`);
+      console.log('');
+    });
+    
+    console.log('Note: Each user has a unique password for security.');
     console.log('\n📋 Instructions for Students:');
     console.log('1. Go to your application login page');
     console.log('2. Use the username and password provided above');
