@@ -29,6 +29,11 @@ const patrickHand = Patrick_Hand({
 export const metadata: Metadata = {
   title: "COMM 324 Language and Technology (Fall 2025)",
   description: "Nothing too special",
+  icons: {
+    icon: '/read.png',
+    shortcut: '/read.png',
+    apple: '/read.png',
+  },
 };
 
 export default function RootLayout({
