@@ -177,6 +177,17 @@ export default function SyllabusPage() {
         .grade-breakdown li {
           display: flex;
           justify-content: space-between;
+          align-items: flex-start;
+        }
+        .grade-breakdown > li:not([style]) {
+          margin-bottom: 0.5em;
+        }
+        .grade-breakdown li > span:nth-child(2) {
+          text-align: right;
+          flex-shrink: 0;
+          min-width: 80px;
+          margin-left: auto;
+          padding-left: 20px;
         }
         .syllabus-content blockquote {
           border-left: 4px solid #ccc;
@@ -751,28 +762,28 @@ export default function SyllabusPage() {
         <h3>Week 2: Oct 1 - AI-Mediated Communication</h3>
         <ul>
           <li><em>AI-Mediated Communication: Definition, Research Agenda, and Ethical Considerations, JCMC</em></li>
-          <li><em>Human heuristics for AI-generated language are flawed. PNAS</em> (Presenter: Emily Zou)</li>
+          <li><em>Human heuristics for AI-generated language are flawed. PNAS</em></li>
         </ul>
         
         <h3>Week 3: Oct 8 - LLMs and role play</h3>
         <ul>
-          <li><em>Role play with large language models | Nature</em> (Presenter: Malia)</li>
+          <li><em>Role play with large language models | Nature</em></li>
           <li><em>Evaluating large language models in theory of mind tasks</em></li>
         </ul>
 
         <h3>Week 4: Oct 15 - Social Bots (Guest Lecturer Harry Yan)</h3>
         <ul>
           <li><strong><span className="deadline-link" onClick={() => scrollToSection('Proposals')}>Proposal Due</span></strong></li>
-          <li><em>Exposure to social bots amplifies perceptual biases and regulation propensity</em> (Presenter: Yasser)</li>
+          <li><em>Exposure to social bots amplifies perceptual biases and regulation propensity</em></li>
           <li><em>The landscape of social bot research: a critical appraisal</em></li>
         </ul>
 
         <h3>Week 5: Oct 22 - Models interacting with each other</h3>
         <ul>
           <li><strong><span className="deadline-link" onClick={() => scrollToSection('Draft Paper')}>Work on draft with partner in class</span></strong></li>
-          <li><em>Could a Large Language Model Be Conscious? - Boston Review</em> (Presenter: Tiffany)</li>
-          <li><em>Generative Agents: Interactive Simulacra of Human Behavior</em> (Presenter: Keshav)</li>
-          <li><em>Large language models show human-like content biases in transmission chain experiments | PNAS</em> (Presenter: Sabina)</li>
+          <li><em>Could a Large Language Model Be Conscious? - Boston Review</em></li>
+          <li><em>Generative Agents: Interactive Simulacra of Human Behavior</em></li>
+          <li><em>Large language models show human-like content biases in transmission chain experiments | PNAS</em></li>
           <li>Everyone read: <em>Darryl Bem&apos;s How to Write an Empirical Article</em> (starting page 11)</li>
         </ul>
         
@@ -780,28 +791,28 @@ export default function SyllabusPage() {
         <ul>
           <li><strong><span className="deadline-link" onClick={() => scrollToSection('Draft Paper')}>Revised Draft Paper Due</span></strong></li>
           <li><em>Generative AI are more truth-biased than humans: A replication and extension of core truth-default theory principles</em></li>
-          <li><em>Durably reducing conspiracy beliefs through dialogues with AI</em> (Presenter: Joe)</li>
-          <li>Extras: <em>Quantifying the vulnerabilities of online public square</em> (Presenter: Bingxu)</li>
+          <li><em>Durably reducing conspiracy beliefs through dialogues with AI</em></li>
+          <li>Extras: <em>Quantifying the vulnerabilities of online public square</em></li>
         </ul>
 
         <h3>Week 7: Nov 5 - LLMs reflecting human diversity of thought and opinion</h3>
         <ul>
-          <li><em>Can generative AI improve social science</em> (Presenter: Sana)</li>
-          <li><em>Can LLMs predict results of social science experiments?</em> (Presenter: Sarah)</li>
+          <li><em>Can generative AI improve social science</em></li>
+          <li><em>Can LLMs predict results of social science experiments?</em></li>
         </ul>
         <p><em>Note: Nov 4 (Tuesday) is Democracy Day - no classes</em></p>
         
         <h3>Week 8: Nov 12 - LLMs as (amazing) content analysts</h3>
         <ul>
           <li><em>Embedding democratic values into social media AIs via societal objective functions</em></li>
-          <li><em>Affective Polarization</em> (Presenter: Tiziano Piccardi)</li>
-          <li><em>The Content Policy Project</em> (Presenters: Samidh and Dave)</li>
+          <li><em>Affective Polarization</em></li>
+          <li><em>The Content Policy Project</em></li>
         </ul>
 
         <h3>Week 9: Nov 19 - Reflections on human cognition</h3>
         <ul>
           <li><em>Metaphors for LLMs (~20 minute audio presentation)</em></li>
-          <li><em>Openly accessible LLMs can help us to understand human cognition. Nature Human Behaviour</em> (Presenter: Luke)</li>
+          <li><em>Openly accessible LLMs can help us to understand human cognition. Nature Human Behaviour</em></li>
         </ul>
         <p><em>Note: Nov 24-28 is Thanksgiving Recess - no classes</em></p>
 
