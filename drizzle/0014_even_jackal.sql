@@ -1,0 +1,1 @@
+ALTER TABLE "persona_cards" ADD COLUMN "intro_message" text;

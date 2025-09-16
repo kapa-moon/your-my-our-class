@@ -68,6 +68,16 @@ export const personaCards = pgTable('persona_cards', {
   recentReading: text('recent_reading'),           // Recent Reading/Thoughts (was learningJourney)
   learningGoal: text('learning_goal'),             // Learning Goal for the Class (was courseAspiration)
   discussionStyle: text('discussion_style'),       // Discussion Style (was collaborationStyle)
+  avatarColor: text('avatar_color'),               // Avatar noise color preference
+  
+  // Sub-bullet data for persona card view (JSON strings)
+  academicBackgroundSubBullets: text('academic_background_sub_bullets'), // JSON of sub-bullet points
+  researchInterestSubBullets: text('research_interest_sub_bullets'),     // JSON of sub-bullet points
+  recentReadingSubBullets: text('recent_reading_sub_bullets'),           // JSON of sub-bullet points
+  learningGoalSubBullets: text('learning_goal_sub_bullets'),             // JSON of sub-bullet points
+  
+  // Introduction message for persona card
+  introMessage: text('intro_message'),                                    // Self-introduction message
   
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

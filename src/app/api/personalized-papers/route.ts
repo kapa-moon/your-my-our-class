@@ -23,17 +23,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let query = db
+    const whereConditions = weekNumber 
+      ? and(
+          eq(personalizedPapers.userId, parseInt(userId)),
+          eq(personalizedPapers.weekNumber, weekNumber)
+        )!
+      : eq(personalizedPapers.userId, parseInt(userId));
+
+    const query = db
       .select()
       .from(personalizedPapers)
-      .where(eq(personalizedPapers.userId, parseInt(userId)));
-
-    if (weekNumber) {
-      query = query.where(and(
-        eq(personalizedPapers.userId, parseInt(userId)),
-        eq(personalizedPapers.weekNumber, weekNumber)
-      )) as any;
-    }
+      .where(whereConditions);
 
     const userPersonalizedPapers = await query.orderBy(personalizedPapers.relevanceRanking);
 

@@ -137,6 +137,12 @@ export async function PUT(request: NextRequest) {
         recentReading: personaData.recentReading || null,
         learningGoal: personaData.learningGoal || null,
         discussionStyle: personaData.discussionStyle || null,
+        avatarColor: personaData.avatarColor || null,
+        academicBackgroundSubBullets: personaData.academicBackgroundSubBullets || null,
+        researchInterestSubBullets: personaData.researchInterestSubBullets || null,
+        recentReadingSubBullets: personaData.recentReadingSubBullets || null,
+        learningGoalSubBullets: personaData.learningGoalSubBullets || null,
+        introMessage: personaData.introMessage || null,
         updatedAt: new Date(),
       })
       .where(eq(personaCards.userId, parseInt(userId)))

@@ -159,35 +159,47 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    const systemPrompt = `You are an expert at creating concise, engaging academic persona summaries for university students. Your task is to create a presentable persona card that helps classmates get to know each other.
+    const systemPrompt = `You are an expert at creating concise, engaging academic persona summaries for university students. Your task is to process raw survey/interview data and create a polished persona card.
 
 Guidelines:
-- Be concise but informative - each bullet point should be 1-2 sentences or one long sentence
-- Use bullet points (max 3 per section)
-- Use **bold** and *italics* appropriately for emphasis
-- ENSURE ALL FIELDS HAVE CONTENT - never leave any section empty
-- Left column content should be focused and practical
-- Right column content should be engaging and personal
-- Extract the most relevant information from available data
-- If information is limited, create plausible content based on context
-- Make it relatable and interesting for classmates
-
-IMPORTANT: Every field must have meaningful content. If source data is sparse, extrapolate thoughtfully based on academic context.
+- Extract and summarize the most important information from the raw data
+- Main bullet points should be 1 sentence or very short 2 sentences maximum
+- Sub-bullet points should be exactly 3 items, each being 1 short sentence
+- Be highly concise and to the point
+- Extract actual content from the provided data, don't make things up
+- If data is sparse, work with what's available but don't fabricate
 
 Respond with ONLY a JSON object in this exact format:
 {
-  "header": {
-    "name": "First name only",
-    "affiliation": "Academic status, program, department, or lab affiliation (e.g., PhD Student in Communication, MS in HCI, Research Assistant)"
+  "personaCard": {
+    "name": "First name from the data",
+    "academicBackground": "One concise sentence summarizing their academic background",
+    "researchInterest": "One concise sentence summarizing their research interests", 
+    "recentReading": "One concise sentence summarizing their recent thoughts/readings",
+    "learningGoal": "One concise sentence summarizing what they want to learn in this class",
+    "introMessage": "A warm, friendly 2-3 sentence self-introduction that captures their personality, tone, and enthusiasm as if they're introducing themselves to classmates. Mirror their original conversational style from the survey responses."
   },
-  "leftColumn": {
-    "background": "• Previous education and relevant experience that shapes their academic perspective.\\n• Key skills, methodological approaches, or technical capabilities they bring to academic work.\\n• Notable coursework, projects, or experiences that inform their current interests.",
-    "discussionStyle": "• Communication preferences and approach to academic discussions.\\n• Collaboration style and how they contribute to group work.\\n• Learning preferences and how they engage with new ideas."
-  },
-  "rightColumn": {
-    "guidingQuestion": "• Current research question, intellectual curiosity, or problem they're passionate about exploring.\\n• What drives their academic work and the key questions they're investigating.\\n• Theoretical frameworks or methodological approaches they're interested in applying.",
-    "learningGoals": "• Specific things they want to learn in this class and why these areas interest them.\\n• Skills, knowledge, or perspectives they hope to develop through the course.\\n• How this class connects to their broader academic or career goals.",
-    "recentInterests": "• Recent readings, experiences, or ideas that have influenced their thinking.\\n• Current intellectual fascinations or emerging research interests they're exploring.\\n• New directions or evolving perspectives in their academic work."
+  "subBullets": {
+    "academicBackground": [
+      "Short sentence about their education/program",
+      "Short sentence about relevant experience or skills", 
+      "Short sentence about their academic focus or specialization"
+    ],
+    "researchInterest": [
+      "Short sentence about their main research area",
+      "Short sentence about specific methods or approaches they're interested in",
+      "Short sentence about future research directions they want to explore"
+    ],
+    "recentReading": [
+      "Short sentence about a recent paper/book that influenced them",
+      "Short sentence about a key insight or learning they gained",
+      "Short sentence about how this connects to their current thinking"
+    ],
+    "learningGoal": [
+      "Short sentence about specific skills they want to develop",
+      "Short sentence about knowledge areas they want to explore",
+      "Short sentence about how this class fits their broader goals"
+    ]
   }
 }`;
 
@@ -234,40 +246,91 @@ Please create a concise, engaging persona summary that will help classmates get 
       );
     }
 
-    // Store or update the presentable persona in the database
-    const personaToStore = {
-      userId: parseInt(userId),
-      name: aiResponse.header.name,
-      affiliation: aiResponse.header.affiliation,
-      background: aiResponse.leftColumn.background,
-      discussionStyle: aiResponse.leftColumn.discussionStyle,
-      guidingQuestion: aiResponse.rightColumn.guidingQuestion,
-      learningGoals: aiResponse.rightColumn.learningGoals,
-      recentInterests: aiResponse.rightColumn.recentInterests,
+    // Update the main persona card with summarized content and sub-bullets
+    const personaCardUpdate = {
+      name: aiResponse.personaCard.name,
+      academicBackground: aiResponse.personaCard.academicBackground,
+      researchInterest: aiResponse.personaCard.researchInterest,
+      recentReading: aiResponse.personaCard.recentReading,
+      learningGoal: aiResponse.personaCard.learningGoal,
+      introMessage: aiResponse.personaCard.introMessage,
+      academicBackgroundSubBullets: JSON.stringify(
+        aiResponse.subBullets.academicBackground.map((content: string, index: number) => ({
+          id: `academicBackground-sub-${index}`,
+          content,
+          isChecked: false,
+          isConfirmed: false
+        }))
+      ),
+      researchInterestSubBullets: JSON.stringify(
+        aiResponse.subBullets.researchInterest.map((content: string, index: number) => ({
+          id: `researchInterest-sub-${index}`,
+          content,
+          isChecked: false,
+          isConfirmed: false
+        }))
+      ),
+      recentReadingSubBullets: JSON.stringify(
+        aiResponse.subBullets.recentReading.map((content: string, index: number) => ({
+          id: `recentReading-sub-${index}`,
+          content,
+          isChecked: false,
+          isConfirmed: false
+        }))
+      ),
+      learningGoalSubBullets: JSON.stringify(
+        aiResponse.subBullets.learningGoal.map((content: string, index: number) => ({
+          id: `learningGoal-sub-${index}`,
+          content,
+          isChecked: false,
+          isConfirmed: false
+        }))
+      ),
       updatedAt: new Date()
     };
 
-    // Check if record exists to decide between insert or update
-    const existingPersona = await db
+    // Update the main persona card
+    await db
+      .update(personaCards)
+      .set(personaCardUpdate)
+      .where(eq(personaCards.userId, parseInt(userId)));
+
+    // Also create/update the presentable persona for the old view compatibility
+    const presentablePersonaData = {
+      userId: parseInt(userId),
+      name: aiResponse.personaCard.name,
+      affiliation: allContent.demographics?.lastName ? 
+        `Student in ${survey?.academicBackground?.split(' ').slice(0, 3).join(' ') || 'Academic Program'}` : 
+        'Student', // Generate basic affiliation from academic background
+      background: aiResponse.personaCard.academicBackground,
+      discussionStyle: persona.discussionStyle || 'Open to various discussion styles',
+      guidingQuestion: aiResponse.personaCard.researchInterest,
+      learningGoals: aiResponse.personaCard.learningGoal,
+      recentInterests: aiResponse.personaCard.recentReading,
+      updatedAt: new Date()
+    };
+
+    const existingPresentablePersona = await db
       .select()
       .from(presentablePersonas)
       .where(eq(presentablePersonas.userId, parseInt(userId)))
       .limit(1);
 
-    if (existingPersona.length > 0) {
-      // Update existing record
+    if (existingPresentablePersona.length > 0) {
       await db
         .update(presentablePersonas)
-        .set(personaToStore)
+        .set(presentablePersonaData)
         .where(eq(presentablePersonas.userId, parseInt(userId)));
     } else {
-      // Insert new record
-      await db.insert(presentablePersonas).values(personaToStore);
+      await db.insert(presentablePersonas).values(presentablePersonaData);
     }
 
     return NextResponse.json({
       success: true,
-      data: aiResponse
+      data: {
+        personaCard: aiResponse.personaCard,
+        subBullets: aiResponse.subBullets
+      }
     });
 
   } catch (error) {
