@@ -190,3 +190,20 @@ export const squareCardPositions = pgTable('square_card_positions', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const personaReactions = pgTable('persona_reactions', {
+  id: serial('id').primaryKey(),
+  personaUserId: integer('persona_user_id').references(() => users.id).notNull(), // User whose persona is being reacted to
+  reactorUserId: integer('reactor_user_id').references(() => users.id).notNull(), // User who made the reaction
+  emoji: text('emoji').notNull(), // The emoji reaction (👍, ❤️, etc.)
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const personaComments = pgTable('persona_comments', {
+  id: serial('id').primaryKey(),
+  personaUserId: integer('persona_user_id').references(() => users.id).notNull(), // User whose persona is being commented on
+  commenterUserId: integer('commenter_user_id').references(() => users.id).notNull(), // User who made the comment
+  comment: text('comment').notNull(), // The comment text
+  aiReply: text('ai_reply'), // AI-generated reply from the persona owner
+  createdAt: timestamp('created_at').defaultNow(),
+});

@@ -3,19 +3,33 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SquarePersonaCard from '@/components/SquarePersonaCard';
+import PersonaPopup from '@/components/PersonaPopup';
+import { getCurrentUserId } from '@/lib/auth-utils';
+
+interface SubBulletPoint {
+  id: string;
+  content: string;
+  isChecked?: boolean;
+  isConfirmed?: boolean;
+}
 
 interface SquareUser {
   userId: number;
   userName: string;
   persona: {
     name: string;
+    affiliation: string;
     academicBackground: string | null;
     researchInterest: string | null;
     recentReading: string | null;
     learningGoal: string | null;
-    discussionStyle: string | null;
     avatarColor: string;
     introMessage: string | null;
+    // Sub-bullets for show more section
+    academicBackgroundSubBullets: SubBulletPoint[];
+    researchInterestSubBullets: SubBulletPoint[];
+    recentReadingSubBullets: SubBulletPoint[];
+    learningGoalSubBullets: SubBulletPoint[];
   };
   position: {
     x: number | null;
@@ -28,9 +42,15 @@ interface SquareUser {
 export default function TheSquarePage() {
   const [users, setUsers] = useState<SquareUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState<SquareUser | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [gridHeight, setGridHeight] = useState(1000);
   const [isTipBoxVisible, setIsTipBoxVisible] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCurrentUserId(getCurrentUserId());
+  }, []);
 
   useEffect(() => {
     fetchSquareData();
@@ -177,6 +197,12 @@ export default function TheSquarePage() {
                 ↻ Refresh
               </button>
               <Link 
+                href="/my-persona-card"
+                className="px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors rounded-md"
+              >
+                My Persona Card
+              </Link>
+              <Link 
                 href="/"
                 className="px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors rounded-md"
               >
@@ -216,6 +242,7 @@ export default function TheSquarePage() {
                 <SquarePersonaCard 
                   key={user.userId} 
                   user={user}
+                  onShowMore={(selectedUser) => setSelectedUser(selectedUser)}
                 />
               ))}
             </div>
@@ -241,6 +268,15 @@ export default function TheSquarePage() {
           </>
         )}
       </div>
+
+      {/* Persona Popup */}
+      {selectedUser && (
+        <PersonaPopup 
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+          currentUserId={currentUserId || undefined}
+        />
+      )}
     </div>
   );
 }
