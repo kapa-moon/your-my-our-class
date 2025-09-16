@@ -135,6 +135,28 @@ export default function Home() {
 
           <span className="text-gray-300">|</span>
 
+          <a
+            href="/the-square"
+            className="relative group text-black dark:text-white hover:text-black dark:hover:text-white transition-all duration-300"
+          >
+            <span className="relative z-10">The Square</span>
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500"></span>
+            <span className="absolute inset-0 bg-orange-200 dark:bg-orange-800 opacity-0 group-hover:opacity-30 transition-opacity duration-300 transform -skew-x-12"></span>
+          </a>
+
+          <span className="text-gray-300">|</span>
+
+          <a
+            href="/personal-playground"
+            className="relative group text-black dark:text-white hover:text-black dark:hover:text-white transition-all duration-300"
+          >
+            <span className="relative z-10">Playground <span className="text-gray-500 text-sm">(Private View)</span></span>
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500"></span>
+            <span className="absolute inset-0 bg-orange-200 dark:bg-orange-800 opacity-0 group-hover:opacity-30 transition-opacity duration-300 transform -skew-x-12"></span>
+          </a>
+
+          <span className="text-gray-300">|</span>
+
           <span className="text-gray-400 dark:text-gray-500">More features to come...</span>
         </div>
 

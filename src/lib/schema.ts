@@ -172,3 +172,21 @@ export const presentablePersonas = pgTable('presentable_personas', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const squareCardPositions = pgTable('square_card_positions', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  
+  // Position coordinates (in pixels or percentage)
+  xPosition: integer('x_position').notNull(),
+  yPosition: integer('y_position').notNull(),
+  
+  // Z-index for layering (if needed later)
+  zIndex: integer('z_index').default(0),
+  
+  // Rotation angle for scattered effect (in degrees)
+  rotation: integer('rotation').default(0),
+  
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});

@@ -40,6 +40,13 @@ const ColorableAvatar: React.FC<ColorableAvatarProps> = ({
 
   useEffect(() => {
     setNoiseColor(initialColor);
+    // Also update the SVG immediately when initialColor changes
+    if (svgRef.current) {
+      const floodElement = svgRef.current.querySelector('#noise-flood');
+      if (floodElement) {
+        floodElement.setAttribute('flood-color', `${initialColor}E3`);
+      }
+    }
   }, [initialColor]);
 
   useEffect(() => {
@@ -83,6 +90,7 @@ const ColorableAvatar: React.FC<ColorableAvatarProps> = ({
       <div className="relative">
         <svg 
           ref={svgRef}
+          key={initialColor} // Force re-render when initial color changes
           width={size} 
           height={size * 0.66} 
           viewBox="0 0 100 66" 
