@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PaperCard from '@/components/PaperCard';
 import PersonalizedPaper from '@/components/PersonalizedPaper';
+import { getCurrentUserId } from '@/lib/auth-utils';
 
 interface RequiredPaper {
   id: number;
@@ -25,6 +26,18 @@ export default function SyllabusPage() {
   const [presentationDetailsOpen, setPresentationDetailsOpen] = useState(false);
   const [requiredPapers, setRequiredPapers] = useState<RequiredPaper[]>([]);
   const [loadingPapers, setLoadingPapers] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [generationMessage, setGenerationMessage] = useState<string>('');
+  const [generationComplete, setGenerationComplete] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
+
+  // Get current user ID
+  useEffect(() => {
+    const currentUserId = getCurrentUserId();
+    if (currentUserId) {
+      setUserId(currentUserId);
+    }
+  }, []);
 
   // Fetch required papers
   useEffect(() => {
@@ -131,6 +144,86 @@ export default function SyllabusPage() {
   // Get papers for a specific week
   const getPapersForWeek = (weekNumber: string): RequiredPaper[] => {
     return requiredPapers.filter(paper => paper.weekNumber === weekNumber);
+  };
+
+  const generatePersonalizedSyllabus = async () => {
+    if (!userId) {
+      alert('Please log in to generate your personalized syllabus.');
+      return;
+    }
+
+    try {
+      setGenerating(true);
+      setGenerationMessage('');
+      setGenerationComplete(false);
+
+      // Generate papers for weeks 2-9 (content weeks)
+      const weeks = ['2', '3', '4', '5', '6', '7', '8', '9'];
+      const weekNames = {
+        '2': 'AI-Mediated Communication',
+        '3': 'LLMs and role play', 
+        '4': 'Social Bots',
+        '5': 'Models interacting with each other',
+        '6': 'Deception and Truth',
+        '7': 'LLMs reflecting human diversity',
+        '8': 'LLMs as content analysts',
+        '9': 'Reflections on human cognition'
+      };
+
+      setGenerationMessage('🤖 AI is analyzing your interests and matching papers...');
+
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const week of weeks) {
+        try {
+          setGenerationMessage(`🤖 Generating personalized papers for Week ${week}: ${weekNames[week as keyof typeof weekNames]}...`);
+          
+          const response = await fetch('/api/personalized-papers', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId,
+              weekNumber: week,
+              forceRegenerate: true // Always regenerate when manually triggered
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            successCount++;
+            console.log(`Generated papers for week ${week}:`, data.papers?.length || 0);
+          } else {
+            failCount++;
+            console.error(`Failed to generate papers for week ${week}:`, data.error);
+          }
+        } catch (weekError) {
+          // failCount++;
+          console.error(`Error generating papers for week ${week}:`, weekError);
+        }
+      }
+
+      if (successCount === weeks.length) {
+        setGenerationMessage(`✅ Success! Generated personalized papers for all ${successCount} weeks.`);
+        setGenerationComplete(true);
+      } else if (successCount > 0) {
+        setGenerationMessage(`⚠️ Partially successful: Generated papers for ${successCount}/${weeks.length} weeks. Some weeks may have failed.`);
+        setGenerationComplete(true);
+      } else {
+        setGenerationMessage(`❌ Failed to generate personalized papers. Please try again or check your internet connection.`);
+        setGenerationComplete(false);
+      }
+
+    } catch (error) {
+      console.error('Error generating personalized syllabus:', error);
+      setGenerationMessage('❌ An error occurred while generating your personalized syllabus. Please try again.');
+      setGenerationComplete(false);
+    } finally {
+      setGenerating(false);
+    }
   };
 
   return (
@@ -524,6 +617,31 @@ export default function SyllabusPage() {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-normal">Syllabus</h1>
             <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end gap-1">
+                <button
+                  onClick={generatePersonalizedSyllabus}
+                  disabled={generating || !userId}
+                  className={`inline-flex items-center px-4 py-2 border border-black rounded-md font-medium transition-colors ${
+                    generating || !userId
+                      ? 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                      : 'text-black bg-white hover:bg-black hover:text-white'
+                  }`}
+                >
+                  {generating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent mr-2"></div>
+                      Generating...
+                    </>
+                  ) : (
+                    '(Re)generate My Syllabus'
+                  )}
+                </button>
+                {!generating && (
+                  <div className="text-xs text-gray-500 italic">
+                    Takes ~3 minutes to generate
+                  </div>
+                )}
+              </div>
               
               <Link 
                 href="/"
@@ -535,6 +653,18 @@ export default function SyllabusPage() {
           </div>
         </div>
       </div>
+      
+      {/* Generation Message */}
+      {generationMessage && (
+        <div className="border-b border-gray-200 bg-blue-50">
+          <div className="max-w-4xl mx-auto px-6 py-3">
+            <div className="text-sm text-blue-800">
+              {generationMessage}
+            </div>
+          </div>
+        </div>
+      )}
+      
       <button 
         className="sidebar-toggle"
         onClick={() => setSidebarOpen(!sidebarOpen)}

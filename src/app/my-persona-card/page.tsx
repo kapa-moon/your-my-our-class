@@ -933,9 +933,6 @@ export default function MyPersonaCard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const [generationMessage, setGenerationMessage] = useState<string>('');
-  const [generationComplete, setGenerationComplete] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'raw' | 'presentable'>('presentable');
   const [presentablePersona, setPresentablePersona] = useState<PresentablePersona | null>(null);
@@ -1314,85 +1311,6 @@ export default function MyPersonaCard() {
     }
   };
 
-  const generatePersonalizedSyllabus = async () => {
-    if (!userId) {
-      alert('Please log in to generate your personalized syllabus.');
-      return;
-    }
-
-    try {
-      setGenerating(true);
-      setGenerationMessage('');
-      setGenerationComplete(false);
-
-      // Generate papers for weeks 2-9 (content weeks)
-      const weeks = ['2', '3', '4', '5', '6', '7', '8', '9'];
-      const weekNames = {
-        '2': 'AI-Mediated Communication',
-        '3': 'LLMs and role play', 
-        '4': 'Social Bots',
-        '5': 'Models interacting with each other',
-        '6': 'Deception and Truth',
-        '7': 'LLMs reflecting human diversity',
-        '8': 'LLMs as content analysts',
-        '9': 'Reflections on human cognition'
-      };
-
-      setGenerationMessage('🤖 AI is analyzing your interests and matching papers...');
-
-      let successCount = 0;
-      let failCount = 0;
-
-      for (const week of weeks) {
-        try {
-          setGenerationMessage(`🤖 Generating personalized papers for Week ${week}: ${weekNames[week as keyof typeof weekNames]}...`);
-          
-          const response = await fetch('/api/personalized-papers', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId,
-              weekNumber: week,
-              forceRegenerate: true // Always regenerate when manually triggered
-            })
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            successCount++;
-            console.log(`Generated papers for week ${week}:`, data.papers?.length || 0);
-          } else {
-            failCount++;
-            console.error(`Failed to generate papers for week ${week}:`, data.error);
-          }
-        } catch (weekError) {
-          // failCount++;
-          console.error(`Error generating papers for week ${week}:`, weekError);
-        }
-      }
-
-      if (successCount === weeks.length) {
-        setGenerationMessage(`✅ Success! Generated personalized papers for all ${successCount} weeks.`);
-        setGenerationComplete(true);
-      } else if (successCount > 0) {
-        setGenerationMessage(`⚠️ Partially successful: Generated papers for ${successCount}/${weeks.length} weeks. Some weeks may have failed.`);
-        setGenerationComplete(true);
-      } else {
-        setGenerationMessage(`❌ Failed to generate personalized papers. Please try again or check your internet connection.`);
-        setGenerationComplete(false);
-      }
-
-    } catch (error) {
-      console.error('Error generating personalized syllabus:', error);
-      setGenerationMessage('❌ An error occurred while generating your personalized syllabus. Please try again.');
-      setGenerationComplete(false);
-    } finally {
-      setGenerating(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -1546,45 +1464,12 @@ export default function MyPersonaCard() {
 
             {/* Generate Personalized Syllabus Section */}
             <div className="pt-8 border-t border-gray-200 text-center space-y-4">
-              {generating && generationMessage && (
-                <div className="text-sm text-gray-600 mb-4">
-                  {generationMessage}
-                </div>
-              )}
-              
-              {generationComplete && !generating ? (
-                <Link
-                  href="/syllabus"
-                  className="inline-flex items-center px-6 py-3 border border-black text-black bg-white hover:bg-black hover:text-white transition-colors rounded-md font-medium"
-                >
-                  Go to Syllabus
-                </Link>
-              ) : (
-                <button
-                  onClick={generatePersonalizedSyllabus}
-                  disabled={generating || !personaCard}
-                  className={`inline-flex items-center px-6 py-3 border border-black rounded-md font-medium transition-colors ${
-                    generating || !personaCard
-                      ? 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                      : 'text-black bg-white hover:bg-black hover:text-white'
-                  }`}
-                >
-                  {generating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent mr-2"></div>
-                      Generating...
-                    </>
-                  ) : (
-                    '(Re)generate My Syllabus'
-                  )}
-                </button>
-              )}
-              
-              {!personaCard && !generating && (
-                <p className="text-xs text-red-500 mt-2">
-                  Please complete your persona card first
-                </p>
-              )}
+              <Link
+                href="/syllabus"
+                className="inline-flex items-center px-6 py-3 border border-black text-black bg-white hover:bg-black hover:text-white transition-colors rounded-md font-medium"
+              >
+                Go to Syllabus
+              </Link>
             </div>
           </div>
         ) : personaCard ? (
