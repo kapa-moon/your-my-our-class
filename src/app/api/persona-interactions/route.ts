@@ -3,6 +3,14 @@ import OpenAI from 'openai';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { personaReactions, personaComments, users, personaCards } from '@/lib/schema';
+import { 
+  logReactionAdded, 
+  logReactionRemoved, 
+  logCommentPosted, 
+  logAIReplyGenerated, 
+  logReplyEditedByOwner, 
+  logReplyDeletedByOwner 
+} from '@/lib/interaction-logger';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -43,6 +51,9 @@ export async function GET(request: NextRequest) {
         id: personaComments.id,
         comment: personaComments.comment,
         aiReply: personaComments.aiReply,
+        manualReply: personaComments.manualReply,
+        isReplyFromOwner: personaComments.isReplyFromOwner,
+        replyEditedAt: personaComments.replyEditedAt,
         commenterUserId: personaComments.commenterUserId,
         commenterName: personaCards.name, // Use persona card name instead of user account name
         commenterUserName: users.name, // Fallback to user name if no persona
@@ -74,7 +85,9 @@ export async function GET(request: NextRequest) {
           reactions: reactionSummary,
           comments: comments.map(comment => ({
             ...comment,
-            commenterName: comment.commenterName || comment.commenterUserName // Use persona name if available, otherwise user name
+            commenterName: comment.commenterName || comment.commenterUserName, // Use persona name if available, otherwise user name
+            currentReply: comment.manualReply || comment.aiReply, // Show manual reply if exists, otherwise AI reply
+            replyType: comment.manualReply ? 'manual' : (comment.aiReply ? 'ai' : null)
           })),
         }
     });
@@ -92,7 +105,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { type, personaUserId, userId, emoji, comment } = body;
+    const { type, personaUserId, userId, emoji, comment, commentId, manualReply } = body;
 
     if (!type || !personaUserId || !userId) {
       return NextResponse.json(
@@ -128,6 +141,14 @@ export async function POST(request: NextRequest) {
           .delete(personaReactions)
           .where(eq(personaReactions.id, existingReaction[0].id));
 
+        // Log the reaction removal
+        await logReactionRemoved(
+          parseInt(personaUserId), 
+          parseInt(userId), 
+          emoji, 
+          existingReaction[0].id
+        );
+
         return NextResponse.json({
           success: true,
           message: 'Reaction removed',
@@ -135,11 +156,19 @@ export async function POST(request: NextRequest) {
         });
       } else {
         // Add new reaction
-        await db.insert(personaReactions).values({
+        const newReaction = await db.insert(personaReactions).values({
           personaUserId: parseInt(personaUserId),
           reactorUserId: parseInt(userId),
           emoji: emoji,
-        });
+        }).returning();
+
+        // Log the reaction addition
+        await logReactionAdded(
+          parseInt(personaUserId), 
+          parseInt(userId), 
+          emoji, 
+          newReaction[0].id
+        );
 
         return NextResponse.json({
           success: true,
@@ -215,6 +244,21 @@ Respond as ${persona.name} in ONE concise sentence that reflects your personalit
         aiReply: aiReply,
       }).returning();
 
+      // Log the comment posting
+      await logCommentPosted(
+        parseInt(personaUserId), 
+        parseInt(userId), 
+        newComment[0].id, 
+        comment
+      );
+
+      // Log the AI reply generation
+      await logAIReplyGenerated(
+        parseInt(personaUserId), 
+        newComment[0].id, 
+        aiReply
+      );
+
       return NextResponse.json({
         success: true,
         message: 'Comment added',
@@ -224,6 +268,116 @@ Respond as ${persona.name} in ONE concise sentence that reflects your personalit
           aiReply: aiReply,
           createdAt: newComment[0].createdAt,
         }
+      });
+
+    } else if (type === 'edit_reply') {
+      if (!commentId || !manualReply) {
+        return NextResponse.json(
+          { error: 'Comment ID and manual reply are required' },
+          { status: 400 }
+        );
+      }
+
+      // Verify the user owns this persona
+      const comment = await db
+        .select()
+        .from(personaComments)
+        .where(eq(personaComments.id, parseInt(commentId)))
+        .limit(1);
+
+      if (comment.length === 0) {
+        return NextResponse.json(
+          { error: 'Comment not found' },
+          { status: 404 }
+        );
+      }
+
+      if (comment[0].personaUserId !== parseInt(userId)) {
+        return NextResponse.json(
+          { error: 'You can only edit replies on your own persona' },
+          { status: 403 }
+        );
+      }
+
+      // Get the old reply for logging
+      const oldReply = comment[0].manualReply || comment[0].aiReply || '';
+
+      // Update with manual reply
+      await db
+        .update(personaComments)
+        .set({
+          manualReply: manualReply.trim(),
+          isReplyFromOwner: true,
+          replyEditedAt: new Date(),
+        })
+        .where(eq(personaComments.id, parseInt(commentId)));
+
+      // Log the reply edit
+      await logReplyEditedByOwner(
+        parseInt(personaUserId), 
+        parseInt(commentId), 
+        oldReply, 
+        manualReply.trim()
+      );
+
+      return NextResponse.json({
+        success: true,
+        message: 'Reply updated',
+      });
+
+    } else if (type === 'delete_reply') {
+      if (!commentId) {
+        return NextResponse.json(
+          { error: 'Comment ID is required' },
+          { status: 400 }
+        );
+      }
+
+      // Verify the user owns this persona
+      const comment = await db
+        .select()
+        .from(personaComments)
+        .where(eq(personaComments.id, parseInt(commentId)))
+        .limit(1);
+
+      if (comment.length === 0) {
+        return NextResponse.json(
+          { error: 'Comment not found' },
+          { status: 404 }
+        );
+      }
+
+      if (comment[0].personaUserId !== parseInt(userId)) {
+        return NextResponse.json(
+          { error: 'You can only delete replies on your own persona' },
+          { status: 403 }
+        );
+      }
+
+      // Get the reply being deleted for logging
+      const deletedReply = comment[0].manualReply || comment[0].aiReply || '';
+
+      // Clear both AI and manual replies
+      await db
+        .update(personaComments)
+        .set({
+          aiReply: null,
+          manualReply: null,
+          isReplyFromOwner: false,
+          replyEditedAt: new Date(),
+        })
+        .where(eq(personaComments.id, parseInt(commentId)));
+
+      // Log the reply deletion
+      await logReplyDeletedByOwner(
+        parseInt(personaUserId), 
+        parseInt(commentId), 
+        deletedReply
+      );
+
+      return NextResponse.json({
+        success: true,
+        message: 'Reply deleted',
       });
     }
 

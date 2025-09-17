@@ -19,6 +19,10 @@ interface Comment {
   id: number;
   comment: string;
   aiReply: string | null;
+  manualReply: string | null;
+  currentReply: string | null;
+  replyType: 'ai' | 'manual' | null;
+  isReplyFromOwner: boolean;
   commenterUserId: number;
   commenterName: string;
   createdAt: string;
@@ -55,6 +59,8 @@ const PersonaPopup: React.FC<PersonaPopupProps> = ({ user, onClose, currentUserI
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [showComments, setShowComments] = useState(true);
+  const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
+  const [editReplyText, setEditReplyText] = useState('');
 
   // Popular emoji options for reactions
   const emojiOptions = ['👍', '❤️', '😊', '🤔', '🎯', '🔥', '👏', '💡', '🚀', '✨'];
@@ -124,6 +130,60 @@ const PersonaPopup: React.FC<PersonaPopupProps> = ({ user, onClose, currentUserI
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditReply = async (commentId: number) => {
+    if (!currentUserId || !editReplyText.trim()) return;
+
+    try {
+      const response = await fetch('/api/persona-interactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'edit_reply',
+          personaUserId: user.userId,
+          userId: currentUserId,
+          commentId: commentId,
+          manualReply: editReplyText.trim(),
+        }),
+      });
+
+      if (response.ok) {
+        setEditingReplyId(null);
+        setEditReplyText('');
+        await fetchInteractions(); // Refresh comments
+      }
+    } catch (error) {
+      console.error('Error editing reply:', error);
+    }
+  };
+
+  const handleDeleteReply = async (commentId: number) => {
+    if (!currentUserId) return;
+
+    try {
+      const response = await fetch('/api/persona-interactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'delete_reply',
+          personaUserId: user.userId,
+          userId: currentUserId,
+          commentId: commentId,
+        }),
+      });
+
+      if (response.ok) {
+        await fetchInteractions(); // Refresh comments
+      }
+    } catch (error) {
+      console.error('Error deleting reply:', error);
+    }
+  };
+
+  const startEditingReply = (comment: Comment) => {
+    setEditingReplyId(comment.id);
+    setEditReplyText(comment.currentReply || '');
   };
 
   return (
@@ -339,9 +399,65 @@ const PersonaPopup: React.FC<PersonaPopupProps> = ({ user, onClose, currentUserI
                         <span className="font-medium text-gray-800">{comment.commenterName}:</span>
                         <span className="text-gray-700">{comment.comment}</span>
                       </div>
-                      {comment.aiReply && (
-                        <div className="ml-4 mt-1 p-2 bg-blue-50 rounded text-xs text-blue-800">
-                          <span className="font-medium">{persona.name} (bot):</span> {comment.aiReply}
+                      {comment.currentReply && (
+                        <div className="ml-4 mt-1">
+                          {editingReplyId === comment.id ? (
+                            // Editing mode
+                            <div className="space-y-2">
+                              <textarea
+                                value={editReplyText}
+                                onChange={(e) => setEditReplyText(e.target.value)}
+                                className="w-full px-2 py-1 text-xs border border-gray-300 rounded resize-none"
+                                rows={2}
+                                placeholder="Write your reply..."
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleEditReply(comment.id)}
+                                  className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                                  disabled={!editReplyText.trim()}
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => setEditingReplyId(null)}
+                                  className="px-2 py-1 text-xs bg-gray-400 text-white rounded hover:bg-gray-500"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            // Display mode
+                            <div className="p-2 bg-blue-50 rounded text-xs text-blue-800">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-grow">
+                                  <span className="font-medium">
+                                    {persona.name} {comment.replyType === 'ai' && !comment.isReplyFromOwner ? '(bot)' : ''}:
+                                  </span>{' '}
+                                  {comment.currentReply}
+                                </div>
+                                {currentUserId === user.userId && (
+                                  <div className="ml-2 flex gap-1">
+                                    <button
+                                      onClick={() => startEditingReply(comment)}
+                                      className="text-blue-600 hover:text-blue-800 text-xs"
+                                      title="Edit reply"
+                                    >
+                                      ✏️
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteReply(comment.id)}
+                                      className="text-red-500 hover:text-red-700 text-xs"
+                                      title="Delete reply"
+                                    >
+                                      🗑️
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

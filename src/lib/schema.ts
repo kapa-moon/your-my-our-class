@@ -205,5 +205,18 @@ export const personaComments = pgTable('persona_comments', {
   commenterUserId: integer('commenter_user_id').references(() => users.id).notNull(), // User who made the comment
   comment: text('comment').notNull(), // The comment text
   aiReply: text('ai_reply'), // AI-generated reply from the persona owner
+  manualReply: text('manual_reply'), // Manual reply from the persona owner
+  isReplyFromOwner: boolean('is_reply_from_owner').default(false), // True if reply is from actual owner
+  replyEditedAt: timestamp('reply_edited_at'), // When the reply was last edited
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const personaInteractionLogs = pgTable('persona_interaction_logs', {
+  id: serial('id').primaryKey(),
+  personaUserId: integer('persona_user_id').references(() => users.id).notNull(), // User whose persona the interaction is on
+  actorUserId: integer('actor_user_id').references(() => users.id).notNull(), // User who performed the action
+  interactionType: text('interaction_type').notNull(), // Type of interaction
+  targetId: integer('target_id'), // ID of the comment/reaction being acted upon
+  details: text('details'), // JSON string with interaction details
   createdAt: timestamp('created_at').defaultNow(),
 });

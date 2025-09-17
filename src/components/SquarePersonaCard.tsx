@@ -48,7 +48,7 @@ const SquarePersonaCard: React.FC<SquarePersonaCardProps> = ({ user, style, onSh
     width: '364px', // 1.3 times of 280px
     height: '220px', // Reduced height to fit content better
     backgroundColor: '#fdf7f2',
-    border: '2px solid black',
+    border: '1px solid black',
     borderRadius: '8px',
     padding: '16px',
     boxShadow: '4px 4px 12px rgba(0,0,0,0.1)',
