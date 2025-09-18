@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
         .where(eq(personaCards.userId, parseInt(personaUserId)))
         .limit(1);
 
-      // Get ALL previous comments and replies for conversation context
+      // Get ALL previous comments and replies for conversation context with enhanced user info
       const conversationHistory = await db
         .select({
           comment: personaComments.comment,
@@ -213,7 +213,12 @@ export async function POST(request: NextRequest) {
           manualReply: personaComments.manualReply,
           commenterName: personaCards.name,
           commenterUserName: users.name,
+          commenterUserId: personaComments.commenterUserId,
+          commentId: personaComments.id,
           createdAt: personaComments.createdAt,
+          // Get commenter's basic persona info for better context
+          commenterResearchInterest: personaCards.researchInterest,
+          commenterAcademicBackground: personaCards.academicBackground,
         })
         .from(personaComments)
         .leftJoin(users, eq(personaComments.commenterUserId, users.id))
@@ -245,12 +250,25 @@ export async function POST(request: NextRequest) {
       const readingSubBullets = parseSubBullets(persona.recentReadingSubBullets);
       const goalSubBullets = parseSubBullets(persona.learningGoalSubBullets);
 
-      // Format conversation history for context
+      // Format conversation history for enhanced context awareness
       const historyContext = conversationHistory.length > 0 
-        ? conversationHistory.map(h => {
+        ? conversationHistory.map((h, index) => {
             const commenterName = h.commenterName || h.commenterUserName || 'Someone';
             const reply = h.manualReply || h.aiReply;
-            return `${commenterName}: "${h.comment}"${reply ? `\n${persona.name}: "${reply}"` : ''}`;
+            
+            // Add commenter context if available
+            let commenterContext = '';
+            if (h.commenterName && (h.commenterResearchInterest || h.commenterAcademicBackground)) {
+              const interests = h.commenterResearchInterest ? ` (Research: ${h.commenterResearchInterest.substring(0, 100)})` : '';
+              const background = h.commenterAcademicBackground ? ` (Background: ${h.commenterAcademicBackground.substring(0, 100)})` : '';
+              commenterContext = interests || background;
+            }
+            
+            // Format with enhanced context
+            const commentEntry = `[Comment ${index + 1}] ${commenterName}${commenterContext}: "${h.comment}"`;
+            const replyEntry = reply ? `\n[Your Reply ${index + 1}] ${persona.name}: "${reply}"` : '';
+            
+            return commentEntry + replyEntry;
           }).join('\n\n')
         : 'This is the first comment on your persona card.';
 
@@ -276,7 +294,7 @@ Style guidelines:
 - Show curiosity about potential connections
 - Keep responses conversational and authentic`;
 
-      // Enhanced user prompt with full context
+      // Enhanced user prompt with full context awareness
       const aiPrompt = `You are ${persona.name}, responding to a comment on your academic persona card.
 
 === YOUR COMPLETE PERSONA ===
@@ -297,18 +315,26 @@ ${goalSubBullets.length > 0 ? goalSubBullets.map((b: any) => `  • ${b.content}
 
 Discussion Style: ${persona.discussionStyle || 'Not specified'}
 
-=== CONVERSATION HISTORY ===
+=== COMPLETE CONVERSATION HISTORY ===
 ${historyContext}
 
-=== NEW COMMENT ===
+=== NEW COMMENT TO RESPOND TO ===
 Someone just commented: "${comment}"
 
+IMPORTANT CONTEXT AWARENESS INSTRUCTIONS:
+- Review the ENTIRE conversation history above to understand ongoing discussions
+- Reference previous comments/replies when relevant to show continuity
+- Build upon themes, topics, or connections mentioned in earlier exchanges
+- If this relates to a previous conversation thread, acknowledge that connection
+- Be aware of who has commented before and their backgrounds/interests
+
 Respond as ${persona.name} in ONE sentence that:
-1. Reflects your personality and academic interests
-2. Is professional but friendly and welcoming
-3. Shows engagement with the comment
-4. Could reference relevant aspects of your research/background if appropriate
-5. Is conversational and authentic
+1. Shows awareness of the conversation history and any ongoing themes
+2. Reflects your personality and academic interests
+3. Is professional but friendly and welcoming
+4. Shows engagement with both the new comment AND conversation context
+5. Could reference relevant aspects of your research/background if appropriate
+6. Demonstrates conversational continuity and memory
 
 Response (one sentence only):`;
 
@@ -318,8 +344,8 @@ Response (one sentence only):`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: aiPrompt }
         ],
-        max_tokens: 150, // Increased from 50 to allow richer responses
-        temperature: 0.8, // Slightly increased for more variety
+        max_tokens: 200, // Increased to allow for more contextually aware responses
+        temperature: 0.7, // Balanced for consistency with context awareness
       });
 
       const aiReply = aiResponse.choices[0]?.message?.content?.trim() || `Thanks for the comment! 😊`;

@@ -62,8 +62,8 @@ const PersonaPopup: React.FC<PersonaPopupProps> = ({ user, onClose, currentUserI
   const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
   const [editReplyText, setEditReplyText] = useState('');
 
-  // Popular emoji options for reactions
-  const emojiOptions = ['👍', '❤️', '😊', '🤔', '🎯', '🔥', '👏', '💡', '🚀', '✨'];
+  // Balanced emoji options for reactions - mix of positive, neutral, questioning, and academic
+  const emojiOptions = ['👍', '❤️', '🤔', '😮', '🧐', '🎯', '💡'];
 
   useEffect(() => {
     fetchInteractions();

@@ -24,6 +24,7 @@ export default function SyllabusPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [tocItems, setTocItems] = useState<Array<{id: string, text: string, level: number}>>([]);
   const [presentationDetailsOpen, setPresentationDetailsOpen] = useState(false);
+  const [optionalReadingDetailsOpen, setOptionalReadingDetailsOpen] = useState(false);
   const [requiredPapers, setRequiredPapers] = useState<RequiredPaper[]>([]);
   const [loadingPapers, setLoadingPapers] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -600,6 +601,130 @@ export default function SyllabusPage() {
           );
           transform: translateY(-50%) rotate(-0.2deg);
         }
+        
+        /* Optional Reading Styles */
+        .optional-badge {
+          display: inline-block;
+          background: #fef3c7;
+          color: #92400e;
+          padding: 0.2rem 0.5rem;
+          border-radius: 4px;
+          font-size: 0.75rem;
+          font-weight: 500;
+          margin-bottom: 0.5rem;
+          border: 1px solid #fbbf24;
+        }
+        .optional-paper-item {
+          padding: 1rem 0;
+          border-bottom: 1px solid #000;
+          margin-bottom: 1rem;
+        }
+        .optional-paper-title {
+          font-size: 1rem;
+          font-weight: normal;
+          color: #000;
+          margin-bottom: 0.5rem;
+          line-height: 1.4;
+        }
+        .optional-paper-authors {
+          color: #000;
+          font-size: 0.9rem;
+          margin-bottom: 0.5rem;
+          font-style: italic;
+        }
+        .optional-paper-meta {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 0.5rem;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        .optional-paper-link {
+          color: #000;
+          text-decoration: none;
+          font-size: 0.9rem;
+          font-weight: normal;
+          border-bottom: 1px solid #f97316;
+          vertical-align: baseline;
+        }
+        .optional-paper-link:hover {
+          color: #000;
+          text-decoration: none;
+          border-bottom-color: #ea580c;
+        }
+        .openai-button {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: transparent;
+          color: black;
+          padding: 0;
+          border-radius: 0;
+          text-decoration: none;
+          border: none;
+          font-size: 0.9rem;
+          font-weight: normal;
+          transition: all 0.2s;
+          margin: 0;
+          vertical-align: baseline;
+        }
+        .openai-button:hover {
+          background: transparent;
+          color: black;
+          text-decoration: none;
+        }
+        .openai-icon {
+          width: 16px;
+          height: 16px;
+          border-radius: 2px;
+          background: url(/colorful_pic.png) center/cover;
+          flex-shrink: 0;
+        }
+        .optional-details-toggle {
+          background: none;
+          border: none;
+          color: #6b7280;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: normal;
+          text-decoration: underline;
+          text-decoration-color: #d1d5db;
+          padding: 0;
+          margin: 0;
+          vertical-align: baseline;
+        }
+        .optional-details-toggle:hover {
+          color: #4b5563;
+          text-decoration-color: #9ca3af;
+        }
+        .optional-tldr-inline {
+          margin: 0.5rem 0;
+          line-height: 1.5;
+        }
+        .optional-tldr-label {
+          font-weight: bold;
+          color: #000;
+          font-size: 0.9rem;
+        }
+        .optional-tldr-text {
+          color: #000;
+          font-size: 0.9rem;
+          font-weight: normal;
+        }
+        .optional-abstract-section {
+          margin-top: 0.5rem;
+        }
+        .optional-abstract-label {
+          font-weight: bold;
+          color: #000;
+          font-size: 0.9rem;
+          margin-bottom: 0.25rem;
+        }
+        .optional-abstract-text {
+          color: #000;
+          line-height: 1.5;
+          font-size: 0.9rem;
+        }
         .overlay {
           position: fixed;
           top: 0;
@@ -623,33 +748,32 @@ export default function SyllabusPage() {
       <div className="border-b border-black">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-normal">Syllabus</h1>
+            <h1 className="text-2xl font-normal">My Syllabus</h1>
             <div className="flex items-center gap-4">
-              <div className="flex flex-col items-end gap-1">
-                <button
-                  onClick={generatePersonalizedSyllabus}
-                  disabled={generating || !userId}
-                  className={`inline-flex items-center px-4 py-2 border border-black rounded-md font-medium transition-colors ${
-                    generating || !userId
-                      ? 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
-                      : 'text-black bg-white hover:bg-black hover:text-white'
-                  }`}
-                >
-                  {generating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent mr-2"></div>
-                      Generating...
-                    </>
-                  ) : (
-                    '(Re)generate My Syllabus'
-                  )}
-                </button>
-                {!generating && (
-                  <div className="text-xs text-gray-500 italic">
-                    Takes ~3 minutes to generate
-                  </div>
+              {!generating && (
+                <div className="text-xs text-gray-500 italic">
+                  Takes ~3 minutes to generate
+                </div>
+              )}
+              
+              <button
+                onClick={generatePersonalizedSyllabus}
+                disabled={generating || !userId}
+                className={`inline-flex items-center px-4 py-2 border border-black rounded-md font-medium transition-colors ${
+                  generating || !userId
+                    ? 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
+                    : 'text-black bg-white hover:bg-black hover:text-white'
+                }`}
+              >
+                {generating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent mr-2"></div>
+                    Generating...
+                  </>
+                ) : (
+                  '(Re)generate My Syllabus'
                 )}
-              </div>
+              </button>
               
               <Link 
                 href="/"
@@ -865,7 +989,7 @@ export default function SyllabusPage() {
 
         <h3>Research Project (70%)</h3>
         <p>
-          <strong>Reports for individuals or groups of two students, with three options:</strong>
+          <strong>Reports for individuals or groups of two students, with multiple track options:</strong>
         </p>
         
         <h4>Options</h4>
@@ -874,17 +998,37 @@ export default function SyllabusPage() {
             <tr>
               <td>
                 <div className="track-chip lit-review-chip">
-                  Literature Review Track
+                  REVIEW Track
                 </div>
               </td>
               <td>
-                Literature review in a focused area
+                Review in a focused area
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div className="track-chip project-chip">
+                  EMPIRICAL Track
+                </div>
+              </td>
+              <td>
+                Design and implement a novel extension or application of one of the models we read about here or develop a new empirical project
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div className="track-chip project-chip">
+                  THEORY Track
+                </div>
+              </td>
+              <td>
+                New or improved concepts, definitions, models, principles, or frameworks
               </td>
             </tr>
             <tr>
               <td>
                 <div className="track-chip reproducibility-chip">
-                  Reproducibility Track
+                  REPRODUCIBILITY Track
                 </div>
               </td>
               <td>
@@ -893,12 +1037,12 @@ export default function SyllabusPage() {
             </tr>
             <tr>
               <td>
-                <div className="track-chip project-chip">
-                  Project Track
+                <div className="track-chip" style={{color: '#666', backgroundColor: 'rgba(200, 200, 200, 0.3)'}}>
+                  Others
                 </div>
               </td>
               <td>
-                Design and implement a novel extension or application of one of the models we read about here or develop a new empirical project
+                You can specify later on
               </td>
             </tr>
           </tbody>
@@ -957,6 +1101,61 @@ export default function SyllabusPage() {
             <PersonalizedPaper weekNumber="2" />
           </div>
         )}
+        
+        <div className="optional-paper-item">
+          <div className="optional-badge">
+            Optional (Highly Recommended)
+          </div>
+
+          <div className="optional-paper-title">
+            HOW PEOPLE USE CHATGPT
+          </div>
+
+          <div className="optional-paper-authors">
+            Aaron Chatterji, Thomas Cunningham, David J. Deming, Zoe Hitzig, Christopher Ong, Carl Yan Shan, Kevin Wadman
+          </div>
+
+          <div className="optional-paper-meta">
+            <a
+              href="https://openai.com/index/how-people-are-using-chatgpt/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="openai-button"
+            >
+              <div className="openai-icon"></div>
+              OpenAI Report
+            </a>
+            
+            <a
+              href="https://www.nber.org/papers/w34255"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="optional-paper-link"
+            >
+              [Paper]
+            </a>
+
+            <button
+              onClick={() => setOptionalReadingDetailsOpen(!optionalReadingDetailsOpen)}
+              className="optional-details-toggle"
+            >
+              {optionalReadingDetailsOpen ? 'Hide Abstract' : 'Show Abstract'}
+            </button>
+          </div>
+
+          <div className="optional-tldr-inline">
+            <span className="optional-tldr-label">TL;DR:</span> <span className="optional-tldr-text">This study analyzes ChatGPT&apos;s rapid growth to 10% of the world&apos;s adult population and finds that while work-related usage has grown steadily, non-work usage has expanded even faster (from 53% to over 70%), with writing, information seeking, and practical guidance being the most common use cases.</span>
+          </div>
+
+          {optionalReadingDetailsOpen && (
+            <div className="optional-abstract-section">
+              <div className="optional-abstract-label">Abstract</div>
+              <div className="optional-abstract-text">
+                Despite the rapid adoption of LLM chatbots, little is known about how they are used. We document the growth of ChatGPT&apos;s consumer product from its launch in November 2022 through July 2025, when it had been adopted by around 10% of the world&apos;s adult population. Early adopters were disproportionately male but the gender gap has narrowed dramatically, and we find higher growth rates in lower-income countries. Using a privacy-preserving automated pipeline, we classify usage patterns within a representative sample of ChatGPT conversations. We find steady growth in work-related messages but even faster growth in non-work-related messages, which have grown from 53% to more than 70% of all usage. Work usage is more common for educated users in highly-paid professional occupations. We classify messages by conversation topic and find that &quot;Practical Guidance,&quot; &quot;Seeking Information,&quot; and &quot;Writing&quot; are the three most common topics and collectively account for nearly 80% of all conversations. Writing dominates work-related tasks, highlighting chatbots&apos; unique ability to generate digital outputs compared to traditional search engines. Computer programming and self-expression both represent relatively small shares of use. Overall, we find that ChatGPT provides economic value through decision support, which is especially important in knowledge-intensive jobs.
+              </div>
+            </div>
+          )}
+        </div>
         
         <h3>Week 3: Oct 8 - LLMs and role play</h3>
         {loadingPapers ? (

@@ -117,14 +117,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Fetch all previously recommended papers for this user across all weeks
+    const previouslyRecommendedPapers = await db
+      .select({ paperID: personalizedPapers.paperID })
+      .from(personalizedPapers)
+      .where(eq(personalizedPapers.userId, parseInt(userId)));
+
+    const previouslyRecommendedPaperIDs = new Set(
+      previouslyRecommendedPapers.map(paper => paper.paperID)
+    );
+
+    // Filter out already recommended papers
+    const availablePapers = allPapers.filter(paper => 
+      !previouslyRecommendedPaperIDs.has(paper.paperID)
+    );
+
+    console.log(`Found ${allPapers.length} total papers, ${previouslyRecommendedPaperIDs.size} already recommended, ${availablePapers.length} available for week ${weekNumber}`);
+    
+    if (previouslyRecommendedPaperIDs.size > 0) {
+      console.log(`Previously recommended papers for user ${userId}:`, Array.from(previouslyRecommendedPaperIDs));
+    }
+
+    if (availablePapers.length < 3) {
+      return NextResponse.json(
+        { error: `Insufficient unique papers available. Only ${availablePapers.length} papers remain that haven't been recommended to this user.` },
+        { status: 400 }
+      );
+    }
+
     // Prepare data for AI matching
     const persona = personaData[0] || null;
     const survey = surveyData[0] || null;
     const courseContext = getCourseContextForWeek(weekNumber);
     const studentInterests = extractRelevantStudentInterests(persona, survey);
 
-    // Create paper summaries for AI analysis
-    const paperSummaries = allPapers.map(paper => ({
+    // Create paper summaries for AI analysis using filtered papers
+    const paperSummaries = availablePapers.map(paper => ({
       id: paper.id,
       paperID: paper.paperID,
       title: paper.title,
@@ -143,12 +171,19 @@ ${courseContext}
 Student Profile:
 ${studentInterests}
 
+IMPORTANT CONTEXT:
+- This student has already been recommended ${previouslyRecommendedPaperIDs.size} papers in previous weeks
+- The papers provided below have been filtered to EXCLUDE any previously recommended papers
+- This ensures the student gets diverse, non-repetitive reading recommendations across the course
+- Available papers for this week: ${availablePapers.length}
+
 Instructions:
 1. Analyze each paper against the student's research interests, academic background, and learning goals
 2. Consider the weekly topic and how each paper relates to it
 3. Prioritize papers that align with both the student's interests AND the course objectives
-4. Select exactly 3 papers and rank them 1-3 (1 being most relevant)
-5. For each selected paper, provide a brief explanation of why it matches the student's interests
+4. Ensure diversity in perspectives, methodologies, and specific topics within the week's theme
+5. Select exactly 3 papers and rank them 1-3 (1 being most relevant)
+6. For each selected paper, provide a brief explanation of why it matches the student's interests
 
 Respond with ONLY a JSON array in this exact format:
 [
@@ -203,13 +238,27 @@ Please select and rank the top 3 most relevant papers for this student for week 
       eq(personalizedPapers.weekNumber, weekNumber)
     ));
 
+    // Validate that AI didn't recommend any previously recommended papers
+    const recommendedPaperIDs = aiResponse.map(rec => rec.paperID);
+    const duplicateRecommendations = recommendedPaperIDs.filter(paperID => 
+      previouslyRecommendedPaperIDs.has(paperID)
+    );
+    
+    if (duplicateRecommendations.length > 0) {
+      console.error('AI recommended previously suggested papers:', duplicateRecommendations);
+      return NextResponse.json(
+        { error: `AI recommended duplicate papers: ${duplicateRecommendations.join(', ')}. This should not happen.` },
+        { status: 500 }
+      );
+    }
+
     // Save personalized papers to database
     const personalizedPaperEntries = [];
     
     for (const recommendation of aiResponse) {
-      const originalPaper = allPapers.find(p => p.paperID === recommendation.paperID);
+      const originalPaper = availablePapers.find(p => p.paperID === recommendation.paperID);
       if (!originalPaper) {
-        console.warn(`Paper not found: ${recommendation.paperID}`);
+        console.warn(`Paper not found in available papers: ${recommendation.paperID}`);
         continue;
       }
 
@@ -243,7 +292,8 @@ Please select and rank the top 3 most relevant papers for this student for week 
     // Insert into database
     if (personalizedPaperEntries.length > 0) {
       await db.insert(personalizedPapers).values(personalizedPaperEntries);
-      console.log(`Successfully inserted ${personalizedPaperEntries.length} personalized papers for user ${userId}, week ${weekNumber}`);
+      console.log(`Successfully inserted ${personalizedPaperEntries.length} unique personalized papers for user ${userId}, week ${weekNumber}`);
+      console.log(`Recommended papers:`, personalizedPaperEntries.map(p => ({ paperID: p.paperID, title: p.title })));
     }
 
     // Verify we have exactly 3 papers

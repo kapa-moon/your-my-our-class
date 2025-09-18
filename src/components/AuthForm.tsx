@@ -69,58 +69,60 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
-      <div className="max-w-md w-full space-y-8 p-8">
+      <div className="max-w-2xl w-full space-y-8 p-8">
         <div className="text-center">
           <h2 className="text-3xl font-light text-gray-900 dark:text-white">
-            {isLogin ? 'Welcome back!' : 'Join us!'}
+            {isLogin ? 'COMM 324: Language and Technology' : 'Join us!'}
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <input
-              type="text"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        <div className="flex justify-center">
+          <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-sm">
+            <div>
+              <input
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
+            {error && (
+              <div className="text-red-500 text-sm text-center">{error}</div>
+            )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-md transition-colors"
-          >
-            {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Sign Up'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 px-4 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white rounded-md transition-colors"
+            >
+              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Sign Up'}
+            </button>
+          </form>
+        </div>
 
         <div className="text-center space-y-4">
-          <button
+          {/* <button
             onClick={() => setIsLogin(!isLogin)}
             className="text-blue-600 hover:text-blue-800 text-sm"
           >
             {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-          </button>
+          </button> */}
 
-          <div className="border-t border-gray-300 dark:border-gray-600 pt-4">
+          {/* <div className="border-t border-gray-300 dark:border-gray-600 pt-4">
             <button
               onClick={handleGuestLogin}
               disabled={loading}
@@ -128,7 +130,7 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
             >
               Continue as guest
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -394,6 +394,48 @@ export const professorPaperList = [
     category: "LLM Cognitive Evaluation",
     identifierType: "paperId" as const
   },
+
+  // arXiv papers fetched from API
+  {
+    identifier: "Evaluating Large Language Models in Theory of Mind Tasks",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "Large Language Models Fail on Trivial Alterations to Theory-of-Mind Tasks",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "Clever Hans or Neural Theory of Mind? Stress Testing Social Reasoning in Large Language Models",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "Minding Language Models' (Lack of) Theory of Mind: A Plug-and-Play Multi-Character Belief Tracker",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "Understanding Social Reasoning in Language Models with Language Models",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "Unveiling Theory of Mind in Large Language Models: A Parallel to Single Neurons in the Human Brain",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "How FaR Are Large Language Models From Agents with Theory-of-Mind?",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "Toward best research practices in AI Psychology",
+    category: "LLM Cognitive Evaluation",
+    identifierType: "title" as const
+  },
 ];
 
 // Export count for verification
