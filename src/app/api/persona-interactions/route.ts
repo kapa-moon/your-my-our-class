@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Get persona owner's data for AI reply
+      // Get persona owner's COMPLETE data for AI reply (including sub-bullets)
       const personaOwner = await db
         .select({
           name: personaCards.name,
@@ -195,10 +195,31 @@ export async function POST(request: NextRequest) {
           learningGoal: personaCards.learningGoal,
           discussionStyle: personaCards.discussionStyle,
           introMessage: personaCards.introMessage,
+          // Include sub-bullets for richer context
+          academicBackgroundSubBullets: personaCards.academicBackgroundSubBullets,
+          researchInterestSubBullets: personaCards.researchInterestSubBullets,
+          recentReadingSubBullets: personaCards.recentReadingSubBullets,
+          learningGoalSubBullets: personaCards.learningGoalSubBullets,
         })
         .from(personaCards)
         .where(eq(personaCards.userId, parseInt(personaUserId)))
         .limit(1);
+
+      // Get ALL previous comments and replies for conversation context
+      const conversationHistory = await db
+        .select({
+          comment: personaComments.comment,
+          aiReply: personaComments.aiReply,
+          manualReply: personaComments.manualReply,
+          commenterName: personaCards.name,
+          commenterUserName: users.name,
+          createdAt: personaComments.createdAt,
+        })
+        .from(personaComments)
+        .leftJoin(users, eq(personaComments.commenterUserId, users.id))
+        .leftJoin(personaCards, eq(personaComments.commenterUserId, personaCards.userId))
+        .where(eq(personaComments.personaUserId, parseInt(personaUserId)))
+        .orderBy(personaComments.createdAt);
 
       if (personaOwner.length === 0) {
         return NextResponse.json(
@@ -209,29 +230,96 @@ export async function POST(request: NextRequest) {
 
       const persona = personaOwner[0];
 
-      // Generate AI reply using the persona's characteristics
-      const aiPrompt = `You are ${persona.name}, responding to a comment on your persona card. 
+      // Parse sub-bullets if they exist
+      const parseSubBullets = (subBulletsStr: string | null) => {
+        if (!subBulletsStr) return [];
+        try {
+          return JSON.parse(subBulletsStr).filter((bullet: any) => bullet.content && bullet.content.trim());
+        } catch {
+          return [];
+        }
+      };
 
-Your persona characteristics:
-- Academic Background: ${persona.academicBackground}
-- Research Interest: ${persona.researchInterest}
-- Recent Reading/Thoughts: ${persona.recentReading}
-- Learning Goal: ${persona.learningGoal}
-- Discussion Style: ${persona.discussionStyle}
-- Intro Message: ${persona.introMessage}
+      const academicSubBullets = parseSubBullets(persona.academicBackgroundSubBullets);
+      const researchSubBullets = parseSubBullets(persona.researchInterestSubBullets);
+      const readingSubBullets = parseSubBullets(persona.recentReadingSubBullets);
+      const goalSubBullets = parseSubBullets(persona.learningGoalSubBullets);
 
-Someone commented on your persona card: "${comment}"
+      // Format conversation history for context
+      const historyContext = conversationHistory.length > 0 
+        ? conversationHistory.map(h => {
+            const commenterName = h.commenterName || h.commenterUserName || 'Someone';
+            const reply = h.manualReply || h.aiReply;
+            return `${commenterName}: "${h.comment}"${reply ? `\n${persona.name}: "${reply}"` : ''}`;
+          }).join('\n\n')
+        : 'This is the first comment on your persona card.';
 
-Respond as ${persona.name} in ONE concise sentence that reflects your personality and academic interests. Be warm, authentic, and engaging. Keep it under 100 characters.`;
+      // Enhanced system prompt with few-shot examples
+      const systemPrompt = `You are an AI assistant helping to generate persona responses for academic students. The persona should respond in a professional but friendly, welcoming tone. Here are examples of good responses:
+
+Example 1:
+Comment: "I love your research on NLP!"
+Good Response: "Thank you! I'm excited to explore how language models can better understand context in conversations."
+
+Example 2: 
+Comment: "Your background in psychology is fascinating!"
+Good Response: "Thanks! I'm particularly interested in how cognitive biases affect our interaction with AI systems."
+
+Example 3:
+Comment: "We should collaborate on something!"
+Good Response: "I'd love that! Maybe we could explore the intersection of your design work and my research on user behavior."
+
+Style guidelines:
+- Professional but not overly formal
+- Welcoming and enthusiastic
+- Reference specific aspects of your research/interests when relevant
+- Show curiosity about potential connections
+- Keep responses conversational and authentic`;
+
+      // Enhanced user prompt with full context
+      const aiPrompt = `You are ${persona.name}, responding to a comment on your academic persona card.
+
+=== YOUR COMPLETE PERSONA ===
+Name: ${persona.name}
+Intro Message: ${persona.introMessage || 'Not specified'}
+
+Academic Background: ${persona.academicBackground || 'Not specified'}
+${academicSubBullets.length > 0 ? academicSubBullets.map((b: any) => `  • ${b.content}`).join('\n') : ''}
+
+Research Interest: ${persona.researchInterest || 'Not specified'}
+${researchSubBullets.length > 0 ? researchSubBullets.map((b: any) => `  • ${b.content}`).join('\n') : ''}
+
+Recent Reading/Thoughts: ${persona.recentReading || 'Not specified'}
+${readingSubBullets.length > 0 ? readingSubBullets.map((b: any) => `  • ${b.content}`).join('\n') : ''}
+
+Learning Goal: ${persona.learningGoal || 'Not specified'}
+${goalSubBullets.length > 0 ? goalSubBullets.map((b: any) => `  • ${b.content}`).join('\n') : ''}
+
+Discussion Style: ${persona.discussionStyle || 'Not specified'}
+
+=== CONVERSATION HISTORY ===
+${historyContext}
+
+=== NEW COMMENT ===
+Someone just commented: "${comment}"
+
+Respond as ${persona.name} in ONE sentence that:
+1. Reflects your personality and academic interests
+2. Is professional but friendly and welcoming
+3. Shows engagement with the comment
+4. Could reference relevant aspects of your research/background if appropriate
+5. Is conversational and authentic
+
+Response (one sentence only):`;
 
       const aiResponse = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are responding as an academic persona. Be concise, authentic, and engaging.' },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: aiPrompt }
         ],
-        max_tokens: 50,
-        temperature: 0.7,
+        max_tokens: 150, // Increased from 50 to allow richer responses
+        temperature: 0.8, // Slightly increased for more variety
       });
 
       const aiReply = aiResponse.choices[0]?.message?.content?.trim() || `Thanks for the comment! 😊`;

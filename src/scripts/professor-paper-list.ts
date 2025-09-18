@@ -336,7 +336,64 @@ export const professorPaperList = [
     identifier: "Quantifying the vulnerabilities of online public square",
     category: "Information Security",
     identifierType: "title" as const
-  }
+  },
+
+  // Missing papers added via script
+  {
+    identifier: "Micro-narratives: A Scalable Method for Eliciting Stories of People's Lived Experience",
+    category: "Narrative Methods",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "Executive Function: A Contrastive Value Policy for Resampling and Relabeling Perceptions via Hindsight Summarization",
+    category: "Executive Function",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "2302.02083",
+    category: "LLM Theory of Mind",
+    identifierType: "paperId" as const
+  },
+  {
+    identifier: "2302.08399",
+    category: "LLM Theory of Mind",
+    identifierType: "paperId" as const
+  },
+  {
+    identifier: "2305.14763",
+    category: "LLM Theory of Mind",
+    identifierType: "paperId" as const
+  },
+  {
+    identifier: "2306.00924",
+    category: "LLM Theory of Mind",
+    identifierType: "paperId" as const
+  },
+  {
+    identifier: "2306.15448",
+    category: "LLM Theory of Mind",
+    identifierType: "paperId" as const
+  },
+  {
+    identifier: "2309.01660",
+    category: "LLM Theory of Mind",
+    identifierType: "paperId" as const
+  },
+  {
+    identifier: "2310.03051",
+    category: "LLM Theory of Mind",
+    identifierType: "paperId" as const
+  },
+  {
+    identifier: "FANToM: A Benchmark for Stress-testing Machine Theory of Mind in Interactions",
+    category: "LLM Theory of Mind",
+    identifierType: "title" as const
+  },
+  {
+    identifier: "2312.01276",
+    category: "LLM Cognitive Evaluation",
+    identifierType: "paperId" as const
+  },
 ];
 
 // Export count for verification

@@ -1379,6 +1379,12 @@ export default function MyPersonaCard() {
                  viewMode === 'raw' ? 'Switch to Persona Card View' : 'Switch to Raw Content'}
               </button>
               <Link 
+                href="/the-square"
+                className="px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors rounded-md"
+              >
+                Go to The Square
+              </Link>
+              <Link 
                 href="/"
                 className="px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors rounded-md"
               >

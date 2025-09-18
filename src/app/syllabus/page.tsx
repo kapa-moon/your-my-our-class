@@ -207,11 +207,19 @@ export default function SyllabusPage() {
       }
 
       if (successCount === weeks.length) {
-        setGenerationMessage(`✅ Success! Generated personalized papers for all ${successCount} weeks.`);
+        setGenerationMessage(`✅ Success! Generated personalized papers for all ${successCount} weeks. Refreshing page...`);
         setGenerationComplete(true);
+        // Auto-reload the page after successful generation
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else if (successCount > 0) {
-        setGenerationMessage(`⚠️ Partially successful: Generated papers for ${successCount}/${weeks.length} weeks. Some weeks may have failed.`);
+        setGenerationMessage(`⚠️ Partially successful: Generated papers for ${successCount}/${weeks.length} weeks. Some weeks may have failed. Refreshing page...`);
         setGenerationComplete(true);
+        // Auto-reload the page even for partial success to show what was generated
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else {
         setGenerationMessage(`❌ Failed to generate personalized papers. Please try again or check your internet connection.`);
         setGenerationComplete(false);
