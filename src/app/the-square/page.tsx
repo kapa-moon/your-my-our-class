@@ -180,7 +180,7 @@ export default function TheSquarePage() {
             <div>
               <h1 className="text-2xl font-normal">The Square</h1>
               <p className="text-sm text-gray-600 mt-1">
-                {users.filter((user) => !['test1', 'student_test', 'pilot3', 'pilot1'].includes(user.userName)).length} classmates in the square
+                {users.filter((user) => !['test1', 'student_test', 'pilot3', 'pilot1'].includes(user.userName)).length-2} classmates in the square
               </p>
             </div>
             <div className="flex items-center gap-4">
