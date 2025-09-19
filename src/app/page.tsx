@@ -172,12 +172,12 @@ export default function Home() {
         {/* Tip Box for Onboarding */}
         {!hasCompletedSurvey && (
           <div className="relative max-w-md mx-auto mb-8">
-            <div className="bg-white border border-black py-2 px-6 relative text-black" style={{fontFamily: 'var(--font-patrick-hand)'}}>
+            <div className="bg-white border border-black py-2 px-6 relative text-black text-left" style={{fontFamily: 'var(--font-patrick-hand)'}}>
               <div className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full" style={{backgroundColor: '#ff305d'}}></div>
-              <p className="text-sm leading-relaxed">
+              <p className="text-base leading-relaxed">
                 It takes about 30 minutes to finish the onboarding process. If you start, we recommend you finish it in one session. It is very important and helpful for us to together try this new, experimental, and hopefully fun class experience!
               </p>
-              <p className="text-sm leading-relaxed mt-2">
+              <p className="text-base leading-relaxed mt-2">
                 Please check out the <button onClick={openUserGuide} className="font-bold text-black border-b-2 border-orange-500 hover:bg-orange-50 transition-colors">📝User Guide</button> if this is the first time you're using this platform.
               </p>
             </div>

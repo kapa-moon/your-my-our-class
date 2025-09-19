@@ -14,6 +14,7 @@ const pilotUsers = [
   { name: 'pilot3', password: '[o;py4' },
   { name: 'pilot4', password: '[o;py5' },
   { name: 'pilot5', password: '[o;py6' },
+  { name: 'prof324', password: 'prof324' },
 ];
 
 // Hash password function

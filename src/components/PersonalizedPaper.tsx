@@ -119,22 +119,13 @@ export default function PersonalizedPaper({ weekNumber }: PersonalizedPaperProps
         <strong>{isNoGeneration ? 'Generate Personalized Papers:' : 'Error:'}</strong> {error}
         <br />
         {isNoGeneration ? (
-          <a 
-            href="/my-persona-card"
-            style={{ 
-              marginTop: '0.5rem', 
-              padding: '0.25rem 0.5rem', 
-              fontSize: '0.8rem', 
-              background: '#856404', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '3px', 
-              textDecoration: 'none',
-              display: 'inline-block'
-            }}
-          >
-            Go to Persona Card →
-          </a>
+          <div style={{
+            marginTop: '0.5rem',
+            fontSize: '0.8rem',
+            color: '#000'
+          }}>
+            Try the (Re)generate Button on the top. If issue continues, contact the team.
+          </div>
         ) : (
           <button 
             onClick={() => window.location.reload()}
@@ -161,22 +152,13 @@ export default function PersonalizedPaper({ weekNumber }: PersonalizedPaperProps
       <div style={{ padding: '1rem', backgroundColor: '#fff3cd', border: '1px solid #ffeaa7', borderRadius: '6px', fontSize: '0.9rem', color: '#856404' }}>
         <strong>Generate Personalized Papers:</strong> No personalized papers available for this week.
         <br />
-        <a 
-          href="/my-persona-card"
-          style={{ 
-            marginTop: '0.5rem', 
-            padding: '0.25rem 0.5rem', 
-            fontSize: '0.8rem', 
-            background: '#856404', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '3px', 
-            textDecoration: 'none',
-            display: 'inline-block'
-          }}
-        >
-          Go to Persona Card →
-        </a>
+        <div style={{
+          marginTop: '0.5rem',
+          fontSize: '0.8rem',
+          color: '#000'
+        }}>
+          Try the (Re)generate Button on the top. If issue continues, contact the team.
+        </div>
       </div>
     );
   }
