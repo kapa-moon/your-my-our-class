@@ -132,6 +132,13 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
             </button>
           </div> */}
         </div>
+
+        {/* Desktop optimization footnote */}
+        <div className="text-center mt-8">
+          <p className="text-xs" style={{ color: '#654321' }}>
+            This web app is optimized for <strong>desktop</strong> view.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -121,7 +121,7 @@ export default function OnboardingGround() {
       id: 'classGoals',
       type: 'textarea',
       category: 'Class Goals',
-      title: 'What do you hope to achieve in this class?',
+      title: 'What do you hope to achieve in this class? Please include your current research project idea.',
       content: 'Share your motivations for taking this course, potential project ideas, and what success looks like for you.',
       placeholder: 'e.g., "Taking this to understand research methodologies for my thesis on algorithmic fairness. Want to explore bias in hiring algorithms as a project. Success means learning to design rigorous studies and building connections with peers interested in AI ethics..."',
       required: true

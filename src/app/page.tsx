@@ -191,6 +191,13 @@ export default function Home() {
         >
           {user.isGuest ? 'End session' : 'Sign out'}
         </button>
+
+        {/* Desktop optimization footnote */}
+        <div className="mt-8">
+          <p className="text-xs" style={{ color: '#654321' }}>
+            This web app is optimized for <strong>desktop</strong> view.
+          </p>
+        </div>
       </div>
       
       {/* Floating User Guide Button */}

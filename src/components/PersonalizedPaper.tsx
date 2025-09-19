@@ -124,7 +124,7 @@ export default function PersonalizedPaper({ weekNumber }: PersonalizedPaperProps
             fontSize: '0.8rem',
             color: '#000'
           }}>
-            Try the (Re)generate Button on the top. If issue continues, contact the team.
+            Try the (Re)generate button above. If issues persist, contact the team.
           </div>
         ) : (
           <button 
@@ -188,9 +188,13 @@ export default function PersonalizedPaper({ weekNumber }: PersonalizedPaperProps
         .personalized-badge {
           color: #450f01;
           font-weight: 500;
+          background: #FDF5E6;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          display: inline-block;
         }
         .shuffle-button {
-          background: none;
+          background: #FDF5E6;
           border: 1px solid #450f01;
           color: #450f01;
           padding: 0.25rem 0.5rem;

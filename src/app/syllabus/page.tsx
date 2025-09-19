@@ -20,6 +20,139 @@ interface RequiredPaper {
   weekTopic: string;
 }
 
+function OptionalPaperReading() {
+  const [showAbstract, setShowAbstract] = useState(false);
+  
+  return (
+    <div style={{ 
+      borderTop: '1px solid #e0e0e0', 
+      marginTop: '1rem',
+      backgroundColor: '#fafafa',
+      borderRadius: '6px',
+      padding: '1rem'
+    }}>
+      <div style={{ 
+        fontSize: '0.9rem', 
+        fontWeight: '600', 
+        color: '#666', 
+        marginBottom: '0.5rem' 
+      }}>
+        📖 Optional, but highly recommended reading
+      </div>
+      
+      <div style={{ fontSize: '1rem', fontWeight: 'normal', marginBottom: '0.5rem', lineHeight: '1.4' }}>
+        HOW PEOPLE USE CHATGPT
+      </div>
+      
+      <div style={{ 
+        color: '#666', 
+        fontSize: '0.9rem', 
+        marginBottom: '0.5rem', 
+        fontStyle: 'italic' 
+      }}>
+        Aaron Chatterji, Thomas Cunningham, David J. Deming, Zoe Hitzig, Christopher Ong, Carl Yan Shan, Kevin Wadman
+      </div>
+      
+      <div style={{ 
+        display: 'flex', 
+        gap: '0.5rem', 
+        marginBottom: '0.75rem', 
+        alignItems: 'center' 
+      }}>
+        <a
+          href="https://openai.com/index/how-people-are-using-chatgpt/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px 12px',
+            backgroundColor: 'white',
+            color: 'black',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            textDecoration: 'none',
+            fontSize: '0.85rem',
+            fontWeight: '500',
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = '#f5f5f5';
+            e.currentTarget.style.borderColor = '#999';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'white';
+            e.currentTarget.style.borderColor = '#ddd';
+          }}
+        >
+          <div style={{
+            width: '16px',
+            height: '16px',
+            borderRadius: '3px',
+            backgroundImage: 'url(/colorful_pic.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            flexShrink: 0
+          }} />
+          OpenAI Report
+        </a>
+        
+        <a
+          href="https://www.nber.org/papers/w34255"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: '#000',
+            textDecoration: 'none',
+            fontSize: '0.9rem',
+            fontWeight: 'normal',
+            borderBottom: '1px solid #f97316'
+          }}
+        >
+          [Paper]
+        </a>
+        
+        <button
+          onClick={() => setShowAbstract(!showAbstract)}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#000',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            fontWeight: 'normal',
+            textDecoration: 'underline',
+            textDecorationColor: '#8B4513',
+            padding: 0
+          }}
+        >
+          {showAbstract ? 'Hide Abstract' : 'Show Abstract'}
+        </button>
+      </div>
+      
+      <div style={{ 
+        fontSize: '0.85rem', 
+        lineHeight: '1.4', 
+        marginBottom: '0.5rem' 
+      }}>
+        <strong>TL;DR:</strong> This study analyzes ChatGPT usage patterns from launch through July 2025, finding that while it reached 10% of the world's adult population, usage has shifted from primarily work-related (47%) to predominantly non-work-related (70%), with "Practical Guidance," "Seeking Information," and "Writing" being the most common use cases.
+      </div>
+      
+      {showAbstract && (
+        <div style={{ 
+          fontSize: '0.85rem', 
+          lineHeight: '1.4', 
+          color: '#555',
+          marginTop: '0.5rem'
+        }}>
+          <strong>Abstract:</strong> Despite the rapid adoption of LLM chatbots, little is known about how they are used. We document the growth of ChatGPT's consumer product from its launch in November 2022 through July 2025, when it had been adopted by around 10% of the world's adult population. Early adopters were disproportionately male but the gender gap has narrowed dramatically, and we find higher growth rates in lower-income countries. Using a privacy-preserving automated pipeline, we classify usage patterns within a representative sample of ChatGPT conversations. We find steady growth in work-related messages but even faster growth in non-work-related messages, which have grown from 53% to more than 70% of all usage. Work usage is more common for educated users in highly-paid professional occupations. We classify messages by conversation topic and find that "Practical Guidance," "Seeking Information," and "Writing" are the three most common topics and collectively account for nearly 80% of all conversations. Writing dominates work-related tasks, highlighting chatbots' unique ability to generate digital outputs compared to traditional search engines. Computer programming and self-expression both represent relatively small shares of use. Overall, we find that ChatGPT provides economic value through decision support, which is especially important in knowledge-intensive jobs.
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function SyllabusPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
@@ -549,6 +682,14 @@ export default function SyllabusPage() {
           color: #0066cc;
           background-color: rgba(173, 214, 255, 0.3);
         }
+        .theory-chip {
+          color: #cc6600;
+          background-color: rgba(255, 204, 153, 0.3);
+        }
+        .others-chip {
+          color: #666666;
+          background-color: rgba(204, 204, 204, 0.3);
+        }
         .tbd-highlight {
           background-color: #fff3cd;
           padding: 4px 8px;
@@ -868,17 +1009,8 @@ export default function SyllabusPage() {
             </span> 
             <span><strong>30%</strong></span>
           </li>
-          <li style={{marginLeft: '20px', fontSize: '0.9em', color: '#666'}}>
-            <span>Draft due to partner at noon on Mon Dec 2</span>
-          </li>
-          <li style={{marginLeft: '20px', fontSize: '0.9em', color: '#666'}}>
-            <span>Comments on draft due to partner Tues Dec 3</span>
-          </li>
-          <li style={{marginLeft: '20px', fontSize: '0.9em', color: '#666'}}>
-            <span>Brief work on draft with partner in class Wed Dec 4</span>
-          </li>
           <li style={{marginLeft: '20px', fontSize: '0.9em', color: '#000'}}>
-            <span>Revised and final draft due on <strong>Dec 13</strong></span>
+            <span>Revised and final draft due on <strong>Dec 10</strong></span>
           </li>
           <li>
             <span 
@@ -928,7 +1060,7 @@ export default function SyllabusPage() {
 
         <h3>Research Project (70%)</h3>
         <p>
-          <strong>Reports for individuals or groups of two students, with three options:</strong>
+          <strong>Reports for individuals or groups of two students, with five options:</strong>
         </p>
         
         <h4>Options</h4>
@@ -937,11 +1069,31 @@ export default function SyllabusPage() {
             <tr>
               <td>
                 <div className="track-chip lit-review-chip">
-                  Literature Review Track
+                  Review Track
                 </div>
               </td>
               <td>
-                Literature review in a focused area
+                Review in a focused area
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div className="track-chip project-chip">
+                  Empirical Track
+                </div>
+              </td>
+              <td>
+                Design and implement a novel extension or application of one of the models we read about here or develop a new empirical project
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div className="track-chip theory-chip">
+                  Theory Track
+                </div>
+              </td>
+              <td>
+                New or improved concepts, definitions, models, principles, or frameworks
               </td>
             </tr>
             <tr>
@@ -956,12 +1108,12 @@ export default function SyllabusPage() {
             </tr>
             <tr>
               <td>
-                <div className="track-chip project-chip">
-                  Project Track
+                <div className="track-chip others-chip">
+                  Others
                 </div>
               </td>
               <td>
-                Design and implement a novel extension or application of one of the models we read about here or develop a new empirical project
+                You can specify later on
               </td>
             </tr>
           </tbody>
@@ -989,12 +1141,12 @@ export default function SyllabusPage() {
           Once the revisions and suggestions are received, the student will revise the paper based on those reviews and comments, and create a final draft that will be handed in to the professor.
         </p>
 
-        <h4>Final Paper (Dec 13)</h4>
+        <h4>Final Paper (Dec 10)</h4>
         <p>
           The final paper will follow the same process and will be no longer than 8 CHI format pages or 15 APA format pages plus references. (30%)
         </p>
         <p>
-          Final papers: In <a href="https://chi2025.acm.org/chi-publication-formats/">CHI format</a>, no more than 8 pages + refs or in <a href="https://owl.purdue.edu/owl/research_and_citation/apa_style/apa_formatting_and_style_guide/general_format.html">APA format</a>, no more than 15 pages + refs) and code for any models (on github) are due on Dec 13 (project track will incorporate assessment of the presentation in this score)
+          Final papers: In <a href="https://chi2025.acm.org/chi-publication-formats/">CHI format</a>, no more than 8 pages + refs or in <a href="https://owl.purdue.edu/owl/research_and_citation/apa_style/apa_formatting_and_style_guide/general_format.html">APA format</a>, no more than 15 pages + refs) and code for any models (on github) are due on Dec 10 (project track will incorporate assessment of the presentation in this score)
         </p>
 
         <h4>Presentations (Dec 3)</h4>
@@ -1018,6 +1170,9 @@ export default function SyllabusPage() {
               <PaperCard key={paper.id} paper={paper} />
             ))}
             <PersonalizedPaper weekNumber="2" />
+            
+            {/* Optional Reading */}
+            <OptionalPaperReading />
           </div>
         )}
         
@@ -1123,10 +1278,10 @@ export default function SyllabusPage() {
 
         <h3>Week 10: Dec 3 - Final project presentations</h3>
         <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
-          <strong>Final Presentations:</strong> <span className="deadline-link" onClick={() => scrollToSection('Presentations')} style={{ color: '#d97706', cursor: 'pointer', textDecoration: 'underline' }}>Final Project Presentations (5-8 minutes)</span>
+          <span className="deadline-link" onClick={() => scrollToSection('Presentations')} style={{ color: '#d97706', cursor: 'pointer', textDecoration: 'underline' }}>Final Project Presentations (5-8 minutes)</span>
         </p>
         
-        <p><strong><span className="brush-underline deadline-link" onClick={() => scrollToSection('Final Paper')}>Final Paper Due: December 13</span></strong></p>
+        <p><strong><span className="brush-underline deadline-link" onClick={() => scrollToSection('Final Paper')}>Final Paper Due: December 10</span></strong></p>
 
         <h2>Course Policies</h2>
         
