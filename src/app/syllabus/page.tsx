@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PaperCard from '@/components/PaperCard';
 import PersonalizedPaper from '@/components/PersonalizedPaper';
+import ProjectSection from '@/components/ProjectSection';
 import { getCurrentUserId } from '@/lib/auth-utils';
 
 interface RequiredPaper {
@@ -1063,61 +1064,8 @@ export default function SyllabusPage() {
           <strong>Reports for individuals or groups of two students, with five options:</strong>
         </p>
         
-        <h4>Options</h4>
-        <table className="options-table">
-          <tbody>
-            <tr>
-              <td>
-                <div className="track-chip lit-review-chip">
-                  Review Track
-                </div>
-              </td>
-              <td>
-                Review in a focused area
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div className="track-chip project-chip">
-                  Empirical Track
-                </div>
-              </td>
-              <td>
-                Design and implement a novel extension or application of one of the models we read about here or develop a new empirical project
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div className="track-chip theory-chip">
-                  Theory Track
-                </div>
-              </td>
-              <td>
-                New or improved concepts, definitions, models, principles, or frameworks
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div className="track-chip reproducibility-chip">
-                  Reproducibility Track
-                </div>
-              </td>
-              <td>
-                Reproduction of &quot;experimental&quot; (simulation/evaluation) results from a paper we read
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div className="track-chip others-chip">
-                  Others
-                </div>
-              </td>
-              <td>
-                You can specify later on
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {/* Interactive Project Section */}
+        {userId && <ProjectSection userId={userId} />}
 
         <h4>AI Assistance Policy</h4>
         <p>

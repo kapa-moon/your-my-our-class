@@ -220,3 +220,14 @@ export const personaInteractionLogs = pgTable('persona_interaction_logs', {
   details: text('details'), // JSON string with interaction details
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+export const studentProjects = pgTable('student_projects', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  projectType: text('project_type').notNull(), // 'review', 'empirical', 'theory', 'reproducibility', 'others'
+  projectDescription: text('project_description'), // Rich text content (HTML)
+  version: integer('version').notNull().default(1), // Version number (1, 2, 3, etc.)
+  isLatest: boolean('is_latest').default(true), // True for the most recent version
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
