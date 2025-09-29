@@ -64,24 +64,24 @@ export default function OnboardingGround() {
       placeholder: 'e.g., Smith, Johnson, Garcia...',
       required: true
     },
-    {
-      id: 'gender',
-      type: 'text',
-      category: 'Basics',
-      title: 'How do you identify your gender?',
-      content: 'This is optional and helps us create inclusive discussion groups.',
-      placeholder: 'e.g., Female, Male, Non-binary, Prefer not to say...',
-      required: false
-    },
-    {
-      id: 'age',
-      type: 'text',
-      category: 'Basics',
-      title: 'What\'s your age range?',
-      content: 'This helps us understand different generational perspectives in discussions.',
-      placeholder: 'e.g., 22, early 20s, mid-30s, prefer not to say...',
-      required: false
-    },
+    // {
+    //   id: 'gender',
+    //   type: 'text',
+    //   category: 'Basics',
+    //   title: 'How do you identify your gender?',
+    //   content: 'This is optional and helps us create inclusive discussion groups.',
+    //   placeholder: 'e.g., Female, Male, Non-binary, Prefer not to say...',
+    //   required: false
+    // },
+    // {
+    //   id: 'age',
+    //   type: 'text',
+    //   category: 'Basics',
+    //   title: 'What\'s your age range?',
+    //   content: 'This helps us understand different generational perspectives in discussions.',
+    //   placeholder: 'e.g., 22, early 20s, mid-30s, prefer not to say...',
+    //   required: false
+    // },
     
     // 2. ACADEMIC BACKGROUND
     {

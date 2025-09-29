@@ -1075,8 +1075,8 @@ export default function SyllabusPage() {
           You can use any tool that you think is relevant, but you MUST acknowledge which tools you used at the end of the paper in a short statement, e.g. &quot;Used Consensus for literature review, used ChatGPT (4) for editing, and Copilot for help with making the figures.&quot; Please acknowledge explicitly whether any text was authored (first draft or revisions) by an AI tool.
         </p>
 
-        <h4>Proposals (Oct 15)</h4>
-        <p>Due in class in Week 4 (1 page, 10%)</p>
+        <h4>Proposals (Oct 7)</h4>
+        <p>Due in class in Week 3 (1 page, 10%)</p>
 
         <h4>Draft Paper (Oct 30)</h4>
         <p>
@@ -1125,6 +1125,9 @@ export default function SyllabusPage() {
         )}
         
         <h3>Week 3: Oct 8 - LLMs and role play</h3>
+        <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '6px', padding: '0.75rem', margin: '1rem 0', fontSize: '0.9rem' }}>
+          <strong>📝 Assignment Due:</strong> <span className="deadline-link" onClick={() => scrollToSection('Proposals')} style={{ color: '#d97706', cursor: 'pointer', textDecoration: 'underline' }}>1-Page Proposal Due</span>
+        </div>
         {loadingPapers ? (
           <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
         ) : (
@@ -1137,9 +1140,6 @@ export default function SyllabusPage() {
         )}
 
         <h3>Week 4: Oct 15 - Social Bots</h3>
-        <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '6px', padding: '0.75rem', margin: '1rem 0', fontSize: '0.9rem' }}>
-          <strong>📝 Assignment Due:</strong> <span className="deadline-link" onClick={() => scrollToSection('Proposals')} style={{ color: '#d97706', cursor: 'pointer', textDecoration: 'underline' }}>1-Page Proposal Due</span>
-        </div>
         {loadingPapers ? (
           <div style={{ padding: '1rem', color: '#666', fontStyle: 'italic' }}>Loading papers...</div>
         ) : (
