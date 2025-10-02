@@ -1075,8 +1075,8 @@ export default function SyllabusPage() {
           You can use any tool that you think is relevant, but you MUST acknowledge which tools you used at the end of the paper in a short statement, e.g. &quot;Used Consensus for literature review, used ChatGPT (4) for editing, and Copilot for help with making the figures.&quot; Please acknowledge explicitly whether any text was authored (first draft or revisions) by an AI tool.
         </p>
 
-        <h4>Proposals (Oct 7)</h4>
-        <p>Due in class in Week 3 (1 page, 10%)</p>
+        <h4>Proposals (Oct 8)</h4>
+        <p>Due before class in Week 3 (1 page, 10%)</p>
 
         <h4>Draft Paper (Oct 30)</h4>
         <p>
