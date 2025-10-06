@@ -162,11 +162,14 @@ export default function Home() {
 
           <span className="text-gray-300">|</span>
 
-          <span className="relative group transition-all duration-300 text-gray-400 cursor-not-allowed">
-            <span className="relative z-10">Playground <span className="text-gray-500 text-sm">(to come...)</span></span>
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-400 opacity-30"></span>
-            <span className="absolute inset-0 bg-gray-200 dark:bg-gray-800 opacity-0 group-hover:opacity-20 transition-opacity duration-300 transform -skew-x-12"></span>
-          </span>
+          <a
+            href="/personal-playground"
+            className="relative group text-black dark:text-white hover:text-black dark:hover:text-white transition-all duration-300"
+          >
+            <span className="relative z-10">Playground</span>
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500"></span>
+            <span className="absolute inset-0 bg-orange-200 dark:bg-orange-800 opacity-0 group-hover:opacity-30 transition-opacity duration-300 transform -skew-x-12"></span>
+          </a>
         </div>
 
         {/* Tip Box for Onboarding */}
