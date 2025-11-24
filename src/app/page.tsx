@@ -163,7 +163,7 @@ export default function Home() {
           <span className="text-gray-300">|</span>
 
           <a
-            href="/personal-playground"
+            href="/persona-playground"
             className="relative group text-black dark:text-white hover:text-black dark:hover:text-white transition-all duration-300"
           >
             <span className="relative z-10">Playground</span>

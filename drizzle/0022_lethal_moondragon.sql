@@ -1,0 +1,1 @@
+ALTER TABLE "playground_conversations" ADD COLUMN "conversation_mindmap" text;

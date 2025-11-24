@@ -231,3 +231,63 @@ export const studentProjects = pgTable('student_projects', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+// Playground Conversations - Main conversation metadata
+export const playgroundConversations = pgTable('playground_conversations', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(), // User who initiated the conversation
+  
+  // Conversation metadata
+  conversationType: text('conversation_type').notNull(), // 'dm' or 'group'
+  userGoal: text('user_goal'), // User's stated goal for the conversation (optional)
+  matchingReasoning: text('matching_reasoning'), // Why these specific agents were matched together
+  
+  // Participating agents (JSON array of persona IDs)
+  participatingAgents: text('participating_agents').notNull(), // JSON array: [1, 5, 8, 12]
+  
+  // Memory pad - constantly updated summary of conversation
+  memoryPad: text('memory_pad'), // AI-generated summary of key points discussed
+  
+  // Mindmap - tree structure of conversation topics (max 3 levels)
+  conversationMindmap: text('conversation_mindmap'), // JSON tree structure of high-level topics discussed
+  
+  // Moderation settings
+  moderationRule: text('moderation_rule'), // JSON object with moderation settings
+  
+  // Current speaker queue (JSON array)
+  speakerQueue: text('speaker_queue'), // JSON array of {agentId, reasoning} objects
+  
+  // State tracking
+  isEnded: boolean('is_ended').default(false),
+  endedAt: timestamp('ended_at'),
+  
+  // Metadata
+  totalUtterances: integer('total_utterances').default(0),
+  lastActivityAt: timestamp('last_activity_at').defaultNow(),
+  
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+// Playground Utterances - Individual messages in conversations
+export const playgroundUtterances = pgTable('playground_utterances', {
+  id: serial('id').primaryKey(),
+  conversationId: integer('conversation_id').references(() => playgroundConversations.id).notNull(),
+  
+  // Speaker information
+  speakerId: integer('speaker_id'), // NULL for moderator, user ID or persona ID for others
+  speakerType: text('speaker_type').notNull(), // 'user', 'agent', 'moderator', 'system'
+  speakerName: text('speaker_name'), // Display name of speaker
+  
+  // Message content
+  content: text('content').notNull(), // The actual message text
+  
+  // Context used for generation (for agent utterances)
+  generationContext: text('generation_context'), // JSON object with context used
+  
+  // Metadata
+  timestamp: timestamp('timestamp').defaultNow(),
+  sequenceNumber: integer('sequence_number').notNull(), // Order in conversation
+  
+  createdAt: timestamp('created_at').defaultNow(),
+});
