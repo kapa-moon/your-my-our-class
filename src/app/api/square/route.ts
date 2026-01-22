@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const userMap = new Map();
     
     usersWithPersonas
-      .filter(user => user.personaName) // Only users with persona cards
+      .filter(user => user.personaName && user.personaName.trim() !== '') // Only users with persona cards with non-empty names
       .forEach(user => {
         // Only keep the first occurrence of each user
         if (!userMap.has(user.userId)) {
@@ -57,11 +57,16 @@ export async function GET(request: NextRequest) {
             }
           };
 
+          // Use personaName if it exists and is not empty, otherwise fall back to userName
+          const displayName = (user.personaName && user.personaName.trim() !== '') 
+            ? user.personaName 
+            : user.userName;
+
           userMap.set(user.userId, {
             userId: user.userId,
             userName: user.userName,
             persona: {
-              name: user.personaName || user.userName,
+              name: displayName,
               affiliation: user.affiliation || 'Student',
               academicBackground: user.academicBackground,
               researchInterest: user.researchInterest,

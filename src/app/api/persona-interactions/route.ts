@@ -339,13 +339,13 @@ Respond as ${persona.name} in ONE sentence that:
 Response (one sentence only):`;
 
       const aiResponse = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: aiPrompt }
         ],
-        max_tokens: 200, // Increased to allow for more contextually aware responses
-        temperature: 0.7, // Balanced for consistency with context awareness
+        max_completion_tokens: 200, // gpt-5-mini uses max_completion_tokens, not max_tokens
+        // Note: gpt-5-mini only supports temperature: 1 (default)
       });
 
       const aiReply = aiResponse.choices[0]?.message?.content?.trim() || `Thanks for the comment! 😊`;

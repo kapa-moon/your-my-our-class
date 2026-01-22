@@ -1,0 +1,1 @@
+ALTER TABLE "playground_conversations" ADD COLUMN "matching_reasoning" text;
